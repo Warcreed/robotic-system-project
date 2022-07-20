@@ -2,18 +2,22 @@ import math
 
 from .block import *
 from .obstacle import *
+from .bowl import *
 
 class World:
 
-    FLOOR_LEVEL = -0.05
+    FLOOR_LEVEL = -0.015
 
     def __init__(self, ui):
         self.__blocks = [ ]
         self.__obstacles = [ 
-            Obstacle(0.1,0.3,0),
-            Obstacle(0.3,0.26,0),
-            Obstacle(0.25,0.1,0),
+            Obstacle(x = 0.1, y = 0.22, a = -45, type = 0),
+            Obstacle(x = 0.2, y = 0.22, a = 0, type = 1),
+            Obstacle(x = 0.18, y = 0.1, a = 0, type = 2),
+            Obstacle(x = -0.22, y = 0.1, a = 0, type = 3),
+            Obstacle(x = -0.20, y = 0.25, a = 0, type = 4),
             ]
+        self.__bowl = Bowl(x = -0.15, y = Bowl.HEIGHT + World.FLOOR_LEVEL, a = 0)
         self.ui = ui
 
     def new_block(self, uColor, uX):
@@ -62,8 +66,9 @@ class World:
             b.paint(qp)
         for o in self.__obstacles:
             o.paint(qp)
+        self.__bowl.paint(qp)
         qp.setPen(QtGui.QColor(217,95,14))
         y = Pose.xy_to_pixel(0, World.FLOOR_LEVEL)[1]
-        qp.drawLine(50, y, 900, y)
-        qp.drawLine(50, y+1, 900, y+1)
+        qp.drawLine(50, y, 1450, y)
+        qp.drawLine(50, y+1, 1450, y+1)
 
