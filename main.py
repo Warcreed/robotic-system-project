@@ -38,8 +38,8 @@ class MainWindow(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(0, 0, 1000, 600)
-        self.setWindowTitle('Robotic Arm Simulator')
+        self.setGeometry(0, 0, 1500, 800)
+        self.setWindowTitle('Robotic Arm Project - Danilo Santitto')
         self.show()
 
         self.delta_t = 1e-3 # 10ms of time-tick
