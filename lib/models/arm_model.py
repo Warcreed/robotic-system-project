@@ -8,12 +8,12 @@ GRAVITY = 9.81
 
 class ArmElement:
 
-    def __init__(self, _L, _M, _b):
+    def __init__(self, _length, _mass, _friction):
         self.w = 0.0
         self.theta = 0.0
-        self.L = _L
-        self.M = _M
-        self.b = _b
+        self.L = _length
+        self.M = _mass
+        self.b = _friction
 
     def evaluate(self, _input_torque, delta_t):
         self.w = self.w - GRAVITY * delta_t * math.cos(self.theta) - \
