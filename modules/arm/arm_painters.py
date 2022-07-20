@@ -35,12 +35,13 @@ class ThreeJointsArmPainter(ArmPainter):
         (x1, y1) = p[0]
         (x2, y2) = p[1]
         (x3, y3) = p[2]
-        qp.drawText(910,  20, "X  = %6.3f m"   % (x2))
-        qp.drawText(910,  40, "Y  = %6.3f m"   % (y2))
-        qp.drawText(910,  60, "Th1= %6.3f deg" % (th[0]))
-        qp.drawText(910,  80, "Th2= %6.3f deg" % (th[1]))
-        qp.drawText(910, 100, "Th3= %6.3f deg" % (th[2]))
-        qp.drawText(910, 120, "T  = %6.3f s"   % (t))
+        x_draw_point = 1350
+        qp.drawText(x_draw_point,  20, "X  = %6.3f m"   % (x2))
+        qp.drawText(x_draw_point,  40, "Y  = %6.3f m"   % (y2))
+        qp.drawText(x_draw_point,  60, "Th1= %6.3f deg" % (th[0]))
+        qp.drawText(x_draw_point,  80, "Th2= %6.3f deg" % (th[1]))
+        qp.drawText(x_draw_point, 100, "Th3= %6.3f deg" % (th[2]))
+        # qp.drawText(910, 120, "T  = %6.3f s"   % (t))
 
         (x1_pos, y1_pos) = Pose.xy_to_pixel(x1, y1)
         (x2_pos, y2_pos) = Pose.xy_to_pixel(x2, y2)
