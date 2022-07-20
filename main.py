@@ -86,14 +86,9 @@ class MainWindow(QWidget):
         self.arm.set_target_xy_a(target_x, target_y, target_alpha)
 
     def generate_new_block(self):
-        if self.world.count_blocks() == 8:
+        if self.world.count_blocks() == 10:
             return
-        while True:
-            x = int(random.uniform(1, 9)) * (Block.WIDTH + Block.GAP)
-            col = int(random.uniform(0, 7))
-            if not(self.world.floor_position_busy(x)):
-                self.world.new_block(COLOR_NAMES[col], x)
-                return
+        self.world.new_block(random.choice(COLOR_NAMES))
 
     def notify_target_got(self):
         self.notification = True

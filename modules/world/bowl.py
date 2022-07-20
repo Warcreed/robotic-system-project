@@ -18,7 +18,6 @@ class Bowl:
             QtCore.QPoint(x + self.__w - 15, y + self.__h),
             QtCore.QPoint(x + self.__w, y),
         ])
-        print(x, y)
 
     def get_pose(self):
         return self.__pose.get_pose()
