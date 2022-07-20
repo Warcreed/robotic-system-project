@@ -25,13 +25,10 @@ from modules.utils.telemetry import *
 from modules.world.world import *
 from modules.phidias.phidias_interface import *
 
-COLOR_NAMES = [ 'black',
-                'red',
+COLOR_NAMES = [ 'red',
                 'green',
-                'yellow',
                 'blue',
-                'magenta',
-                'cyan' ]
+                ]
 
 class MainWindow(QWidget):
 

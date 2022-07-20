@@ -1,13 +1,10 @@
 from PyQt5 import QtGui, QtCore
 from modules.utils.pose import *
 
-COLOR_MAP = { 'black' : QtGui.QColor(0,0,0),
-              'red' : QtGui.QColor(255,0,0),
+COLOR_MAP = { 'red' : QtGui.QColor(255,0,0),
               'green' : QtGui.QColor(0,255,0),
-              'yellow' : QtGui.QColor(255,255,0),
-              'blue' : QtGui.QColor(0,0,255),
-              'magenta' : QtGui.QColor(255,0,255),
-              'cyan' : QtGui.QColor(0,255,255) }
+              'blue' : QtGui.QColor(0,0,255)
+            }
 
 class Block:
 

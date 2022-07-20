@@ -8,13 +8,13 @@ class ArmControl:
         self.arm = arm
         self.use_profile = use_profile
         if self.arm.L < 0.03:
-            self.speed_controller = PIDSat(kp=0.3, ki=10, kd=0, saturation=5)
+            self.speed_controller = PIDSat(kp=0.3, ki=10, kd=0, saturation=10)
         else:
-            self.speed_controller = PIDSat(kp=10, ki=5, kd=0, saturation=5)
+            self.speed_controller = PIDSat(kp=10, ki=5, kd=0, saturation=10)
         if self.use_profile:
             self.position_controller = ProfilePositionController(6.0, 2.0, 2.0)
         else:
-            self.position_controller = PIDSat(kp=15, ki=0, kd=0, saturation=8)
+            self.position_controller = PIDSat(kp=15, ki=0, kd=0, saturation=10)
         self.target = 0
         self.w_target = 0
 
