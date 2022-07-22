@@ -17,8 +17,14 @@ class BlockSlot:
     def is_busy(self):
         return self.busy
 
-    def get_pose(self):
-        return self.__pose
+    def set_as_busy(self):
+        self.busy = True
+
+    def set_as_free(self):
+        self.busy = False
+
+    def get_slot_pose(self):
+        return self.__pose.get_pose()
     
     def paint(self, qp):
        qp.setPen(QtCore.Qt.black)

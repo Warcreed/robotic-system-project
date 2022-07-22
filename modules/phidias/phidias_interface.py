@@ -118,16 +118,19 @@ def process_incoming_request(ui, from_address, payload):
                             # interpret belief name and call the relevant method
                             #
                             if Name == 'go_to':
-                                ui.set_from(_from)
+                                ui.set_phidias_agent(_from)
                                 ui.go_to(*Terms)
+                            if Name == 'go_to_block_slot':
+                                ui.set_phidias_agent(_from)
+                                ui.go_to_block_slot(*Terms)
                             elif Name == 'new_block':
-                                ui.set_from(_from)
+                                ui.set_phidias_agent(_from)
                                 ui.generate_new_block()
-                            elif Name == 'sense_distance':
-                                ui.set_from(_from)
-                                ui.sense_distance()
+                            elif Name == 'sense_block_presence':
+                                ui.set_phidias_agent(_from)
+                                ui.sense_block_presence()
                             elif Name == 'sense_color':
-                                ui.set_from(_from)
+                                ui.set_phidias_agent(_from)
                                 ui.sense_color()
                             response = { 'result' : 'ok' }
                         else:
