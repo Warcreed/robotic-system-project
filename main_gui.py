@@ -37,7 +37,7 @@ class MainWindow(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(0, 0, 1800, 800)
+        self.setGeometry(0, 0, 1000, 600)
         self.setWindowTitle('Robotic Arm Project - Danilo Santitto')
         self.show()
 
