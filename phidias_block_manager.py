@@ -8,22 +8,39 @@ from phidias.Agent import *
 # ---------------------------------------------------------------------
 
 class generate_blocks(Procedure): pass
+class _pick_block(Procedure): pass
 
 class gen(Reactor): pass
 class block_slot_status(Reactor): pass
 class block_slot_color(Reactor): pass
+class pick_block(Reactor): pass
 
 class new_block(Belief): pass
 
 class block_slot(Belief): pass
+
+# beliefs interpreted by the main agent
+class pick_block_at(Reactor): pass
+class no_more_blocks(Reactor): pass
 
 def_vars('C', 'D', 'N', 'B', '_from')
 
 class block_manager(Agent):
     def main(self):
 
-      # reactor
+      # generating blocks
       +gen(N)[{'from': _from}] >> [ show_line("\nRequest to generate ", N, " blocks from ", _from), generate_blocks(N)]
+      generate_blocks() >> [ +new_block()[{'to': 'robot@127.0.0.1:6566'}] ]
+      generate_blocks(0) >> [ ]
+      generate_blocks(N) / (geq(N,0) & leq(N, 6)) >> [
+        show_line("Generating block ", N, "..."),
+        generate_blocks(), 
+        "N = N - 1", 
+        generate_blocks(N) ]
+      generate_blocks(N) >> [ show_line("Attenzione! Numero di blocchi generabili [0, 6]")]
+      # check block already generated 
+
+      # scanning blocks
       +block_slot_status(N, B)[{'from': _from}] / block_slot(N, D) >> [
         -block_slot(N, D),
         +block_slot(N, B),
@@ -36,17 +53,28 @@ class block_manager(Agent):
         show_line("Block Slot ", N, " color ", C, " set")
       ]
 
+      # picking blocks
+      +pick_block()[{'from': _from}] / block_slot(N, True, 'blue') >> [
+        _pick_block(N, C)
+      ]
+      +pick_block()[{'from': _from}] / block_slot(N, True, 'green') >> [
+        _pick_block(N, C)
+      ]
+      +pick_block()[{'from': _from}] / block_slot(N, True, 'red') >> [
+        _pick_block(N, C)
+      ]
 
-      # strategy
-      generate_blocks() >> [ +new_block()[{'to': 'robot@127.0.0.1:6566'}] ]
-      generate_blocks(0) >> [ ]
-      generate_blocks(N) / (geq(N,0) & leq(N, 6)) >> [
-        show_line("Generating block ", N, "..."),
-        generate_blocks(), 
-        "N = N - 1", 
-        generate_blocks(N) ]
-      generate_blocks(N) >> [ show_line("Attenzione! Numero di blocchi generabili [0, 6]")]
-      # check block already generated 
+      _pick_block(N, C) >> [
+        show_line("Requested block: sending block ", N, " color ", C),
+        +pick_block_at(N)[{'to': 'main@127.0.0.1:6565'}]
+      ]
+
+      +pick_block()[{'from': _from}] >> [
+        show_line("No more blocks in stock"),
+        +no_more_blocks()[{'to': 'main@127.0.0.1:6565'}]
+      ]
+
+
 
 
 agent_block_manager = block_manager()
