@@ -37,7 +37,7 @@ class MainWindow(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(0, 0, 1500, 800)
+        self.setGeometry(0, 0, 1800, 800)
         self.setWindowTitle('Robotic Arm Project - Danilo Santitto')
         self.show()
 
@@ -57,7 +57,7 @@ class MainWindow(QWidget):
         self.painter = ThreeJointsArmPainter(self.arm)
 
         target_x = 0.1
-        target_y = 0.05
+        target_y = 0.15
         target_alpha = -90
 
         self.arm.set_target_xy_a(target_x, target_y, target_alpha)
@@ -74,16 +74,16 @@ class MainWindow(QWidget):
         self._phidias_agent = None
 
         self.block_poses = [
-            Pose(0.075, 0.032, -90),
-            Pose(0.125, 0.032, -90),
-            Pose(0.15, 0.11, 0),
-            Pose(0.187, 0.155, 90),
-            Pose(0.138, 0.165, 103),
-            Pose(0.038, 0.245, 0),
-            Pose(0.032, 0.23, 160),
-            Pose(-0.07, 0.18, 65),
-            Pose(-0.095, 0.19, 131),
-            Pose(-0.12, 0.09, 170),
+            Pose(0.115, 0.0675, 0),
+            Pose(0.215, 0.032, -90),
+            Pose(0.255, 0.032, -90),
+            Pose(0.27, 0.11, 0),
+            Pose(0.265, 0.19, 0),
+            Pose(0.275, 0.215, 100),
+            Pose(0.175, 0.295, 0),
+            Pose(0.155, 0.3, 70),
+            Pose(0.11, 0.28, 65),
+            Pose(0.09, 0.27, 130),            
         ]
 
     def set_phidias_agent(self, _phidias_agent):
@@ -121,7 +121,17 @@ class MainWindow(QWidget):
             d = self.world.sense_color()
             params = [] if d is None else [d]
             Messaging.send_belief(self._phidias_agent, 'color', params, 'robot')
-
+    
+    def collect_block(self):
+        if self._phidias_agent is not None:
+            self.world.collect_block()
+            Messaging.send_belief(self._phidias_agent, 'block_collected', [], 'robot')
+    
+    def drop_block(self):
+        if self._phidias_agent is not None:
+            self.world.drop_block()
+            Messaging.send_belief(self._phidias_agent, 'block_dropped', [], 'robot')
+    
     def go(self):
         #self.telemetry.gather(self.delta_t, self.arm.element_3_model.w, self.arm.element_3_control.w_target)
         #if self.t > 8:

@@ -8,15 +8,15 @@ from modules.utils.pose import *
 class ThreeJointsArm:
 
     def __init__(self, trajectory_controller, use_profile):
-        self.element_1_model = ArmElement(_length = 0.13, _mass = 0.8 + 0.8 + 0.1, _friction = 8e-5)
+        self.element_1_model = ArmElement(_length = 0.2, _mass = 0.8 + 0.8 + 0.1, _friction = 8e-5)
         self.element_1_control = ArmControl(self.element_1_model, use_profile)
-        self.element_2_model = ArmElement(_length = 0.13, _mass = 0.8 + 0.1, _friction = 8e-5)
+        self.element_2_model = ArmElement(_length = 0.2, _mass = 0.8 + 0.1, _friction = 8e-5)
         self.element_2_control = ArmControl(self.element_2_model, use_profile)
         self.element_3_model = ArmElement(_length = 0.02, _mass = 0.1, _friction = 8e-5)
         self.element_3_control = ArmControl(self.element_3_model, use_profile)
         self.trajectory = trajectory_controller
         self.trajectory.arm = self
-        self.pose = Pose()
+        self.pose = Pose(0.1, 0.1, -90)
 
     def set_target(self, theta1, theta2, theta3):
         self.element_1_control.set_target(theta1)
@@ -61,7 +61,8 @@ class ThreeJointsArm:
         arg = 1 - atan_den**2
         if arg < 0:
             return (None, None, None)
-        theta2 = math.atan2( - math.sqrt( arg ), atan_den ) if xt >= 0 else math.atan2( + math.sqrt( arg ), atan_den )
+        # theta2 = math.atan2( - math.sqrt( arg ), atan_den ) if xt >= 0 else math.atan2( + math.sqrt( arg ), atan_den )
+        theta2 = math.atan2( - math.sqrt( arg ), atan_den ) 
         theta1 = math.atan2(yt, xt) - math.atan2(self.element_2_model.L * math.sin(theta2),
                                                  self.element_1_model.L + self.element_2_model.L * math.cos(theta2) )
         theta3 = math.radians(alpha) - theta1 - theta2

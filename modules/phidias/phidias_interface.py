@@ -132,6 +132,12 @@ def process_incoming_request(ui, from_address, payload):
                             elif Name == 'sense_color':
                                 ui.set_phidias_agent(_from)
                                 ui.sense_color()
+                            elif Name == 'collect_block':
+                                ui.set_phidias_agent(_from)
+                                ui.collect_block()
+                            elif Name == 'drop_block':
+                                ui.set_phidias_agent(_from)
+                                ui.drop_block()
                             response = { 'result' : 'ok' }
                         else:
                             response = { 'result' : 'err',

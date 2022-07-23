@@ -15,11 +15,11 @@ class Obstacle:
     WIDTH = 0.085
     HEIGHT = 0.085
 
-    def __init__(self, x, y, a, type):
+    def __init__(self, x, y, a, type, w = WIDTH, h = HEIGHT):
         self.__pose = Pose()
         self.__pose.set_pose(x,y,a)
-        self.__w = Pose.pixel_scale(Obstacle.WIDTH)
-        self.__h = Pose.pixel_scale(Obstacle.HEIGHT)
+        self.__w = Pose.pixel_scale(w)
+        self.__h = Pose.pixel_scale(h)
         (x, y) = self.__pose.to_pixel()
         self.__points = QtGui.QPolygon([
             # QtCore.QPoint(random.uniform(x, x + self.__w), y),
