@@ -82,10 +82,10 @@ class MainWindow(QWidget):
     
     def go_to_block_slot(self, block_index):
         # add moving to target
-        block = self.world.get_block_slot_at(block_index)
-        (target_x, target_y, target_alpha) = block.get_slot_pose()
+        # block = self.world.get_block_slot_at(block_index)
+        self.notification = False
+        (target_x, target_y, target_alpha) = self.block_poses[block_index].get_pose()
         self.arm.set_target_xy_a(target_x, target_y, target_alpha)
-        # Messaging.send_belief(self._phidias_agent, 'target_got', [], 'robot')
 
     def sense_block_presence(self): #da sistemare
         if self._phidias_agent is not None:
@@ -106,10 +106,7 @@ class MainWindow(QWidget):
     def sense_color(self):
         if self._phidias_agent is not None:
             d = self.world.sense_color()
-            if d is None:
-                params = []
-            else:
-                params = [d]
+            params = [] if d is None else [d]
             Messaging.send_belief(self._phidias_agent, 'color', params, 'robot')
 
     def go(self):

@@ -55,29 +55,23 @@ class World:
 
     def sense_block_presence(self):
         (x,y,a) = self.ui.arm.get_pose_xy_a().get_pose()
-        print(a)
-        # a = math.degrees(a)
-        # if abs(a + 90) > 2: # +/- 2 degrees
-        #     return None
-        # L = self.ui.arm.element_3_model.L
-        
-        # d = y - L - World.FLOOR_LEVEL
-        # for b in self.__blocks:
-        #     (xb,yb,ab) = b.get_pose()
-        #     if (x >= xb)and(x <= (xb + Block.WIDTH)):
-        #         return (d - Block.HEIGHT)
-        return None
+        L = self.ui.arm.element_3_model.L
+        x_1 = (2*L) * math.cos(a) + x       # sposta punto di controllo su end effector
+        y_1 = (2*L) * math.sin(a) + y       # simula la presenza di un raggio o vettore che interseca il blocco
+        for b in self.__blocks:               # rilevarne la presenza
+            (xb,yb,ab) = b.get_pose()           
+            if (x_1 >= xb)and(x_1 <= (xb + Block.WIDTH)) and (y_1 >= yb)and(y_1 <= (yb + Block.WIDTH)):
+                return True
+        return False
 
     def sense_color(self):
         (x,y,a) = self.ui.arm.get_pose_xy_a().get_pose()
-        a = math.degrees(a)
-        if abs(a + 90) > 2: # +/- 2 degrees
-            return None
         L = self.ui.arm.element_3_model.L
-        d = y - L - World.FLOOR_LEVEL
-        for b in self.__blocks:
-            (xb,yb,ab) = b.get_pose()
-            if (x >= xb)and(x <= (xb + Block.WIDTH)):
+        x_1 = (2*L) * math.cos(a) + x       # sposta punto di controllo su end effector
+        y_1 = (2*L) * math.sin(a) + y       # simula la presenza di un raggio o vettore che interseca il blocco
+        for b in self.__blocks:               # rilevarne il colore
+            (xb,yb,ab) = b.get_pose()           
+            if (x_1 >= xb)and(x_1 <= (xb + Block.WIDTH)) and (y_1 >= yb)and(y_1 <= (yb + Block.WIDTH)):
                 return b.get_color()
         return None
 
