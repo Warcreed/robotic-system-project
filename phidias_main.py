@@ -8,6 +8,7 @@ from phidias.Agent import *
 
 class mode(SingletonBelief): pass
 class bowl_target_pos(SingletonBelief): pass
+class idle_target_pos(SingletonBelief): pass
 
 # beliefs interpreted by the robot
 class go_to_block_slot(Belief): pass
@@ -58,7 +59,9 @@ class main(Agent):
         +gen(N)[{'to': 'block_manager@127.0.0.1:6767'}] 
       ]
 
-      pick() >> []
+      pick() >> [
+        scan()
+      ]
 
       # comandi ausiliari
       scan() >> [ +mode("scanning"), _scan_block_slot(0) ]
@@ -69,7 +72,12 @@ class main(Agent):
       # strategy
 
       ## scanning
-      _scan_block_slot(10) >> [ show_line("Fine scansione\n"), +mode(""), go(0.1, 0.15, -90)]
+      _scan_block_slot(10) / idle_target_pos(X, Y, A) >> [ 
+        show_line("End scan\n"), 
+        +mode("start_collecting"), 
+        go(X, Y, A)
+      ]
+
       _scan_block_slot(N) >> [ go(N), +target(N) ]
 
       +target_got()[{'from': _from}] / (target(N) & mode(M) & eq(M, "scanning")) >> [
@@ -99,6 +107,10 @@ class main(Agent):
 
       # picking block
 
+      +target_got()[{'from': _from}] / (mode(M) & eq(M, "start_collecting")) >> [
+        _pick_blocks()
+      ]
+
       _pick_blocks() >> [
         show_line('\nStart collecting block in order (blue, green, red): '),
         +mode("collecting"), 
@@ -108,7 +120,7 @@ class main(Agent):
       +pick_block_at(N)[{'from':_from}] >> [ go(N), +target(N)]
 
       +target_got()[{'from': _from}] / (target(N) & mode(M) & eq(M, "collecting")) >> [
-        show_line('\nReached Target ', N),
+        show_line('\nReached Target: collecting block in slot ', N),
         +collect_block()[{'to': 'robot@127.0.0.1:6566'}]
       ]
 
@@ -124,19 +136,20 @@ class main(Agent):
 
       +block_dropped()[{'from': _from}] / target(N) >> [
         show_line('\nBlock dropped successfully! Requesting next block...'),
-        +block_slot_status(N, False)[{'to': 'block_manager@127.0.0.1:6767'}],
         +mode("collecting"), 
-        +pick_block()[{'to': 'robot@127.0.0.1:6566'}]
+        +pick_block()[{'to': 'block_manager@127.0.0.1:6767'}]
       ]
 
-      +no_more_blocks()[{'from':_from}] >> [
+      +no_more_blocks()[{'from':_from}] / idle_target_pos(X, Y, A) >> [
         show_line("All blocks collected!"),
-        +mode('')
+        +mode(''),
+        go(X, Y, A)
       ]
 
 agent_main = main()
 agent_main.start()
-agent_main.assert_belief(bowl_target_pos(0.07, 0.09, -90))
+agent_main.assert_belief(bowl_target_pos(0.07, 0.06, -90))
+agent_main.assert_belief(idle_target_pos(0.1, 0.15, -90))
 
 PHIDIAS.run_net(globals(), 'http', 6565)
 PHIDIAS.shell(globals())

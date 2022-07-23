@@ -55,22 +55,23 @@ class block_manager(Agent):
 
       # picking blocks
       +pick_block()[{'from': _from}] / block_slot(N, True, 'blue') >> [
-        _pick_block(N, C)
+        _pick_block(N, 'blue')
       ]
       +pick_block()[{'from': _from}] / block_slot(N, True, 'green') >> [
-        _pick_block(N, C)
+        _pick_block(N, 'green')
       ]
       +pick_block()[{'from': _from}] / block_slot(N, True, 'red') >> [
-        _pick_block(N, C)
+        _pick_block(N, 'red')
       ]
 
       _pick_block(N, C) >> [
-        show_line("Requested block: sending block ", N, " color ", C),
+        show_line("\nRequested block: sending block in slot ", N, " color ", C),
+        -block_slot(N, True, C),
         +pick_block_at(N)[{'to': 'main@127.0.0.1:6565'}]
       ]
 
       +pick_block()[{'from': _from}] >> [
-        show_line("No more blocks in stock"),
+        show_line("\nNo more blocks in stock"),
         +no_more_blocks()[{'to': 'main@127.0.0.1:6565'}]
       ]
 
