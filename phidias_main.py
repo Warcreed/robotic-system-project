@@ -32,6 +32,8 @@ class pick(Procedure): pass
 class scan(Procedure): pass
 class _scan_block_slot(Procedure): pass
 
+class sense(Procedure): pass
+
 def_vars('X','Y','A','_from','D', 'W', 'Gap', 'C', 'N', 'M', 'B')
 
 # ---------------------------------------------------------------------
@@ -41,7 +43,10 @@ class main(Agent):
     def main(self):
 
       # commands
-      generate(N) >> [ +gen(N)[{'to': 'block_manager@127.0.0.1:6767'}] ]
+      generate(N) >> [ 
+        show_line("Requesting generation of ", N, " blocks"),
+        +gen(N)[{'to': 'block_manager@127.0.0.1:6767'}] 
+      ]
 
       pick() >> []
 
@@ -50,25 +55,27 @@ class main(Agent):
       go(X) >> [ +go_to_block_slot(X)[{'to': 'robot@127.0.0.1:6566'}] ]
       go(X,Y,A) >> [ +go_to(X,Y,A)[{'to': 'robot@127.0.0.1:6566'}] ]
 
-
+      sense() >> [+sense_block_presence()[{'to': 'robot@127.0.0.1:6566'}]]
       # strategy
 
       ## scanning
-      _scan_block_slot(10) >> [ show_line("Fine scansione"), +mode("")]
+      _scan_block_slot(10) >> [ show_line("Fine scansione\n"), +mode(""), go(0.1, 0.1, -90)]
       _scan_block_slot(N) >> [ go(N), +target(N) ]
 
       +target_got()[{'from': _from}] / (target(N) & mode(M) & eq(M, "scanning")) >> [
-        show_line('Reached Target ', N),
+        show_line('\nReached Target ', N),
         +sense_block_presence()[{'to': 'robot@127.0.0.1:6566'}]
       ]
 
       +is_block_present(True)[{'from': _from}] / target(N) >> [
-        +block_slot_status(N, B)[{'to': 'block_manager@127.0.0.1:6767'}],
+        show_line("Block is present at position  ", N),
+        +block_slot_status(N, True)[{'to': 'block_manager@127.0.0.1:6767'}],
         +sense_color()[{'to': 'robot@127.0.0.1:6566'}]
       ]
 
       +is_block_present(False)[{'from': _from}] / target(N) >> [
-        +block_slot_status(N, B)[{'to': 'block_manager@127.0.0.1:6767'}],
+        show_line("Block is NOT present at position  ", N),
+        +block_slot_status(N, False)[{'to': 'block_manager@127.0.0.1:6767'}],
         "N=N+1",
         _scan_block_slot(N)
       ]
