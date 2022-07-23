@@ -73,6 +73,19 @@ class MainWindow(QWidget):
 
         self._phidias_agent = None
 
+        self.block_poses = [
+            Pose(0.075, 0.032, -90),
+            Pose(0.125, 0.032, -90),
+            Pose(0.15, 0.11, 0),
+            Pose(0.187, 0.155, 90),
+            Pose(0.138, 0.165, 103),
+            Pose(0.038, 0.245, 0),
+            Pose(0.032, 0.23, 160),
+            Pose(-0.07, 0.18, 65),
+            Pose(-0.095, 0.19, 131),
+            Pose(-0.12, 0.09, 170),
+        ]
+
     def set_phidias_agent(self, _phidias_agent):
         self._phidias_agent = _phidias_agent
 
