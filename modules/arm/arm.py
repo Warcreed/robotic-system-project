@@ -8,9 +8,9 @@ from modules.utils.pose import *
 class ThreeJointsArm:
 
     def __init__(self, trajectory_controller, use_profile):
-        self.element_1_model = ArmElement(_length = 0.12, _mass = 0.8 + 0.8 + 0.1, _friction = 8e-5)
+        self.element_1_model = ArmElement(_length = 0.13, _mass = 0.8 + 0.8 + 0.1, _friction = 8e-5)
         self.element_1_control = ArmControl(self.element_1_model, use_profile)
-        self.element_2_model = ArmElement(_length = 0.12, _mass = 0.8 + 0.1, _friction = 8e-5)
+        self.element_2_model = ArmElement(_length = 0.13, _mass = 0.8 + 0.1, _friction = 8e-5)
         self.element_2_control = ArmControl(self.element_2_model, use_profile)
         self.element_3_model = ArmElement(_length = 0.02, _mass = 0.1, _friction = 8e-5)
         self.element_3_control = ArmControl(self.element_3_model, use_profile)

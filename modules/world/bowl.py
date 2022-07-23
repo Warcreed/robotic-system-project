@@ -4,7 +4,7 @@ from modules.utils.pose import *
 class Bowl:
 
     WIDTH = 0.1
-    HEIGHT = 0.07
+    HEIGHT = 0.05
 
     def __init__(self, x, y, a):
         self.__pose = Pose()
