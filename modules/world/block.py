@@ -1,4 +1,6 @@
+import math
 from PyQt5 import QtGui, QtCore
+from lib.models.arm_model import GRAVITY
 from modules.utils.pose import *
 
 COLOR_MAP = { 'red' : QtGui.QColor(255,0,0),
@@ -44,13 +46,17 @@ class Block:
 
     WIDTH = 0.03
     HEIGHT = 0.02
-    GAP = 0.01
-
-    def __init__(self, uColor):
+    GRAVITY = 1.81
+    FLOOR_LEVEL = -0.015
+    
+    def __init__(self, x, y, a, uColor):
         self.__color = uColor
-        self.__pose = Pose()
+        self.__pose = Pose(x, y, a)
+        self.__a = a
         self.__w = Pose.pixel_scale(Block.WIDTH)
         self.__h = Pose.pixel_scale(Block.HEIGHT)
+        self.__is_collected = False
+        self.__dropping = False
 
     def get_pose(self):
         return self.__pose.get_pose()
@@ -61,7 +67,34 @@ class Block:
     def get_color(self):
         return self.__color
 
-    def paint(self, qp):
+    def collect(self):
+        self.__is_collected=True
+    
+    def drop(self):
+        self.__is_collected=False
+        self.__dropping=True
+
+    def follow_end_effector(self, arm):
+        (x,y,a) = arm.get_pose_xy_a().get_pose()
+        L = arm.element_3_model.L
+        x_1 = (L+L/4) * math.cos(a) + x       # sposta punto di controllo su end effector
+        y_1 = (L+L/4) * math.sin(a) + y
+        self.__pose.set_pose(x_1, y_1, math.degrees(self.__a))
+    
+    def _dropping(self, time):
+        (x, y, a) = self.__pose.get_pose()
+        if y <= Block.FLOOR_LEVEL:
+            self.__dropping = False
+            return
+        s = (-0.5) * Block.GRAVITY * time**2 + y
+        self.__pose.set_pose(x, s, a)
+
+    def paint(self, qp, arm, time):
+        if self.__is_collected:
+            self.follow_end_effector(arm)
+        if self.__dropping:
+            self._dropping(time)
+
         qp.setPen(QtCore.Qt.black)
         qp.setBrush(COLOR_MAP[self.__color])
 

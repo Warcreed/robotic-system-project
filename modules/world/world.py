@@ -37,14 +37,15 @@ class World:
         # print check
         self.print_block_slots = True
 
+        self.collected_block_index = None
+
     def new_block(self, uColor):
         slot = random.choice(self.__block_slots)
         while slot.is_busy():
             slot = random.choice(self.__block_slots)
         slot.set_as_busy()
-        b = Block(uColor)
         (x, y, a) = slot.get_slot_pose()
-        b.set_pose(x, y, a)
+        b = Block(x, y, a, uColor)
         self.__blocks.append(b)
 
     def count_blocks(self):
@@ -76,14 +77,22 @@ class World:
         return None
 
     def collect_block(self):
-        if self._phidias_agent is not None:
-            self.world.collect_block()
-            Messaging.send_belief(self._phidias_agent, 'block_collected', [], 'robot')
+        (x,y,a) = self.ui.arm.get_pose_xy_a().get_pose()
+        L = self.ui.arm.element_3_model.L
+        x_1 = (2*L) * math.cos(a) + x       # sposta punto di controllo su end effector
+        y_1 = (2*L) * math.sin(a) + y       # simula la presenza di un raggio o vettore che interseca il blocco
+        for b in self.__blocks:               # rilevarne il colore
+            (xb,yb,ab) = b.get_pose()           
+            if (x_1 >= xb)and(x_1 <= (xb + Block.WIDTH)) and (y_1 >= yb)and(y_1 <= (yb + Block.WIDTH)):
+                self.collected_block_index = self.__blocks.index(b)
+                return b.collect()
+        return None
     
     def drop_block(self):
-        if self._phidias_agent is not None:
-            self.world.drop_block()
-            Messaging.send_belief(self._phidias_agent, 'block_dropped', [], 'robot')
+        if self.collected_block_index is not None:
+            self.__blocks[self.collected_block_index].drop()
+            self.collected_block_index = None
+        return 
 
     def paint(self, qp):
         qp.setPen(QtGui.QColor(217,95,14))
@@ -98,7 +107,7 @@ class World:
             for b in self.__block_slots:
                 b.paint(qp)
         for b in self.__blocks:
-            b.paint(qp)
+            b.paint(qp, self.ui.arm, self.ui.t)
 
 
         
