@@ -54,21 +54,19 @@ class main(Agent):
     def main(self):
 
       # commands
-      generate(N) >> [ 
+      generate(N) / (geq(N,1) & leq(N, 6)) >> [ 
         show_line("Requesting generation of ", N, " blocks"),
         +gen(N)[{'to': 'block_manager@127.0.0.1:6767'}] 
       ]
-
-      pick() >> [
-        scan()
-      ]
+      pick() >> [ +mode("scanning"), _scan_block_slot(0) ]
 
       # comandi ausiliari
-      scan() >> [ +mode("scanning"), _scan_block_slot(0) ]
       go(X) >> [ +go_to_block_slot(X)[{'to': 'robot@127.0.0.1:6566'}] ]
       go(X,Y,A) >> [ +go_to(X,Y,A)[{'to': 'robot@127.0.0.1:6566'}] ]
 
-      sense() >> [+sense_block_presence()[{'to': 'robot@127.0.0.1:6566'}]]
+      generate(N) >> [ show_line("Attenzione! Numero di blocchi generabili [1, 6]") ]
+      generate() >> [ show_line("Attenzione! Indicare numero di blocchi da generare: generate(N), con N=[1, 6]") ]
+
       # strategy
 
       ## scanning

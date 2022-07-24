@@ -29,15 +29,16 @@ class block_manager(Agent):
     def main(self):
 
       # generating blocks
-      +gen(N)[{'from': _from}] >> [ show_line("\nRequest to generate ", N, " blocks from ", _from), generate_blocks(N)]
+      +gen(N)[{'from': _from}] / (geq(N,1) & leq(N, 6)) >> [ show_line("\nRequest to generate ", N, " blocks from ", _from), generate_blocks(N)]
+      
       generate_blocks() >> [ +new_block()[{'to': 'robot@127.0.0.1:6566'}] ]
       generate_blocks(0) >> [ ]
-      generate_blocks(N) / (geq(N,0) & leq(N, 6)) >> [
+      generate_blocks(N) / (geq(N,1) & leq(N, 6)) >> [
         show_line("Generating block ", N, "..."),
         generate_blocks(), 
         "N = N - 1", 
         generate_blocks(N) ]
-      generate_blocks(N) >> [ show_line("Attenzione! Numero di blocchi generabili [0, 6]")]
+      generate_blocks(N) >> [ show_line("Attenzione! Numero di blocchi generabili [1, 6]") ]
       # check block already generated 
 
       # scanning blocks
@@ -74,9 +75,6 @@ class block_manager(Agent):
         show_line("\nNo more blocks in stock"),
         +no_more_blocks()[{'to': 'main@127.0.0.1:6565'}]
       ]
-
-
-
 
 agent_block_manager = block_manager()
 agent_block_manager.start()
