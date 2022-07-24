@@ -68,6 +68,7 @@ class block_manager(Agent):
       _pick_block(N, C) >> [
         show_line("\nRequested block: sending block in slot ", N, " color ", C),
         -block_slot(N, True, C),
+        +block_slot(N, False),
         +pick_block_at(N)[{'to': 'main@127.0.0.1:6565'}]
       ]
 
