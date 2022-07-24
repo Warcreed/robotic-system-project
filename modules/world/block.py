@@ -49,7 +49,8 @@ class Block:
     GRAVITY = 1.81
     FLOOR_LEVEL = -0.015
     
-    def __init__(self, x, y, a, uColor):
+    def __init__(self, x, y, a, uColor, slot_index):
+        self.__slot_index = slot_index
         self.__color = uColor
         self.__pose = Pose(x, y, a)
         self.__a = a
@@ -57,6 +58,9 @@ class Block:
         self.__h = Pose.pixel_scale(Block.HEIGHT)
         self.__is_collected = False
         self.__dropping = False
+
+    def get_slot_index(self):
+        return self.__slot_index
 
     def get_pose(self):
         return self.__pose.get_pose()

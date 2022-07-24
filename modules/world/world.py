@@ -45,7 +45,7 @@ class World:
             slot = random.choice(self.__block_slots)
         slot.set_as_busy()
         (x, y, a) = slot.get_slot_pose()
-        b = Block(x, y, a, uColor)
+        b = Block(x, y, a, uColor, self.__block_slots.index(slot))
         self.__blocks.append(b)
 
     def count_blocks(self):
@@ -85,6 +85,8 @@ class World:
             (xb,yb,ab) = b.get_pose()           
             if (x_1 >= xb)and(x_1 <= (xb + Block.WIDTH)) and (y_1 >= yb)and(y_1 <= (yb + Block.WIDTH)):
                 self.collected_block_index = self.__blocks.index(b)
+                slot_index = b.get_slot_index()
+                self.__block_slots[slot_index].set_as_free()
                 return b.collect()
         return None
     
@@ -92,6 +94,8 @@ class World:
         if self.collected_block_index is not None:
             self.__blocks[self.collected_block_index].drop()
             self.collected_block_index = None
+            if len(list(filter(lambda slot: slot.is_busy(), self.__block_slots)))== 0:
+                 self.__blocks = []
         return 
 
     def paint(self, qp):
