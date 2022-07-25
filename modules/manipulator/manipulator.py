@@ -9,7 +9,7 @@ class ThreeJointsArm:
 
     def __init__(self, trajectory_controller):
         self.element_1_model = ArmElement(_length = 0.2, _mass = 0.8 + 0.8 + 0.1, _friction = 8e-5)
-        self.element_1_control = ArmControl(self.element_1_model)
+        self.element_1_control = ArmControl(self.element_1_model, base_joint=True)
         self.element_2_model = ArmElement(_length = 0.2, _mass = 0.8 + 0.1, _friction = 8e-5)
         self.element_2_control = ArmControl(self.element_2_model)
         self.element_3_model = ArmElement(_length = 0.02, _mass = 0.1, _friction = 8e-5)

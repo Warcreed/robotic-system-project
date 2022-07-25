@@ -4,12 +4,16 @@ from lib.controllers.profile_position_control import *
 
 class ArmControl:
 
-    def __init__(self, arm):
+    def __init__(self, arm, base_joint=False):
         self.arm = arm
         # self.speed_controller = PIDSat(kp=0.3, ki=10, kd=0, saturation=10, antiwindup=True) if self.arm.L < 0.03 else PIDSat(kp=200, ki=3, kd=0, saturation=10, antiwindup=True)
         # self.position_controller = PIDSat(kp=8, ki=0, kd=0, saturation=10, antiwindup=True)
-        self.speed_controller = PIDSat(kp=0.3, ki=10, kd=0, saturation=10, antiwindup=True) if self.arm.L < 0.03 else PIDSat(kp=200, ki=3, kd=0, saturation=10, antiwindup=True)
-        self.position_controller = PIDSat(kp=8, ki=0, kd=0, saturation=10, antiwindup=True)
+        if base_joint:
+            self.speed_controller = PIDSat(kp=200, ki=3, kd=0, saturation=10, antiwindup=True)
+            self.position_controller = PIDSat(kp=8, ki=0, kd=0, saturation=10, antiwindup=True)
+        else:
+            self.speed_controller = PIDSat(kp=0.3, ki=10, kd=0, saturation=10, antiwindup=True) if self.arm.L < 0.03 else PIDSat(kp=200, ki=3, kd=0, saturation=10, antiwindup=True)
+            self.position_controller = PIDSat(kp=3.5, ki=0, kd=0, saturation=10, antiwindup=True)
         self.theta_target = 0
         self.w_target = 0
         self.torque = 0

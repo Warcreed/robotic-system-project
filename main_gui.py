@@ -150,8 +150,8 @@ class MainWindow(QWidget):
         second_joint = (self.arm.theta2, self.arm.element_2_model.theta, self.arm.element_2_control.w_target, self.arm.element_2_model.w, self.arm.element_2_control.torque)
         end_effector_joint = (self.arm.theta3, self.arm.element_3_model.theta, self.arm.element_3_control.w_target, self.arm.element_3_model.w, self.arm.element_3_control.torque)
         self.telemetry.gather(self.t, base_joint, second_joint, end_effector_joint)
-        if self.t > 7:
-           self.telemetry.show(print_base_joint= False, print_second_joint= False, print_end_eff_joint= True)
+        if self.t > 15:
+           self.telemetry.show(print_base_joint= False, print_second_joint= True, print_end_eff_joint= False)
            self.show_telemetry = False
 
     def paintEvent(self, event):
