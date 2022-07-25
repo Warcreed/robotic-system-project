@@ -47,13 +47,12 @@ class MainWindow(QWidget):
         self.trajectory_data = [ ]
         self.target_trajectory_data = [ ]
 
-        self.use_profile = False
         self.use_trajectory = True
         self.use_angle_interpolation = False
 
-        self.trajectory = Trajectory3(1.0, 1.5, 1.5)
+        self.trajectory = VirtualRobot2D(_vmax = 0.5, _acc = 0.1, _dec = 0.1)
 
-        self.arm = ThreeJointsArm(self.trajectory, self.use_profile)
+        self.arm = ThreeJointsArm(self.trajectory)
         self.painter = ThreeJointsArmPainter(self.arm)
 
         target_x = 0.1
