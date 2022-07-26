@@ -17,6 +17,9 @@ class ThreeJointsArm:
         self.trajectory = trajectory_controller
         self.trajectory.arm = self
         self.pose = Pose(0.1, 0.1, -90)
+        self.theta1 = 0
+        self.theta2 = 0
+        self.theta3 = 0
 
     def set_target(self, theta1, theta2, theta3):
         self.element_1_control.set_target(theta1)
@@ -77,9 +80,9 @@ class ThreeJointsArm:
 
     def evaluate_trajectory(self, delta_t):
         (self.trajectory_x, self.trajectory_y, self.trajectory_a) = self.trajectory.evaluate(delta_t)
-        (th1, th2, th3) = self.inverse_kinematics(self.trajectory_x, self.trajectory_y, math.degrees(self.trajectory_a))
-        if th1 is not None:
-            self.set_target(th1, th2, th3)
+        (self.theta1, self.theta2, self.theta3) = self.inverse_kinematics(self.trajectory_x, self.trajectory_y, math.degrees(self.trajectory_a))
+        if self.theta1 is not None:
+            self.set_target(self.theta1, self.theta2, self.theta3)
         self.evaluate(delta_t)
 
 # import math
