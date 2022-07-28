@@ -6,7 +6,9 @@ from .bowl import *
 
 class World:
 
-    FLOOR_LEVEL = -0.015
+    FLOOR_LEVEL = -0.020
+    HEIGHT = 0.42
+    WIDTH = 0.5
 
     def __init__(self, ui):
         self.__blocks = [ ]

@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import QApplication, QWidget
 from modules.manipulator.manipulator import *
 from modules.manipulator.manipulator_painters import *
 from modules.utils.telemetry import *
+from modules.utils.path_planning import *
 from modules.world.world import *
 from modules.phidias.phidias_interface import *
 
@@ -63,9 +64,12 @@ class MainWindow(QWidget):
         self.arm.set_target_xy_a(target_x, target_y, target_alpha)
 
         self.world = World(self)
+        self.px_world_height = Pose.pixel_scale(World.HEIGHT)
+        self.px_world_width = Pose.pixel_scale(World.WIDTH)
+        self.px_world_floor_level = Pose.pixel_scale(World.FLOOR_LEVEL)
 
         self.telemetry = Telemetry()
-        self.show_telemetry = True
+        self.show_telemetry = False
 
         self._timer_painter = QtCore.QTimer(self)
         self._timer_painter.timeout.connect(self.go)
@@ -86,6 +90,8 @@ class MainWindow(QWidget):
             Pose(0.11, 0.28, 65),
             Pose(0.09, 0.27, 130),            
         ]
+        self.nf1 = NF1(20)
+
 
     def set_phidias_agent(self, _phidias_agent):
         self._phidias_agent = _phidias_agent
@@ -162,15 +168,17 @@ class MainWindow(QWidget):
         qp.setBrush(QtGui.QColor(255,255,255))
         qp.drawRect(event.rect())
 
-        # qp.setPen(QtCore.Qt.black)
-        # qp.drawLine(50, 500, 900, 500)
-        # qp.drawLine(50, 500, 50, 50)
+        qp.setPen(QtCore.Qt.black)
+        qp.drawLine(50, int(self.px_world_floor_level), int(self.px_world_width + 50), int(self.px_world_floor_level))
+        qp.drawLine(50, int(self.px_world_height + 50), 50, 50)
         # qp.drawLine(50, 50, 900, 50)
         # qp.drawLine(900, 50, 900, 500)
 
         qp.setPen(QtCore.Qt.black)
         self.painter.paint(qp, self.t)
+        self.nf1.paint(qp)
         self.world.paint(qp)
+
 
         qp.end()
 
