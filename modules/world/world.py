@@ -41,6 +41,9 @@ class World:
 
         self.collected_block_index = None
 
+    def get_obstacles(self):
+        return self.__obstacles
+
     def new_block(self, uColor):
         slot = random.choice(self.__block_slots)
         while slot.is_busy():

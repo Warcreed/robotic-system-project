@@ -90,8 +90,9 @@ class MainWindow(QWidget):
             Pose(0.11, 0.28, 65),
             Pose(0.09, 0.27, 130),            
         ]
-        self.nf1 = NF1(25)
+        self.nf1 = NF1(3)
         self.print_nf1 = True
+        self.nf1.set_is_obstacle_for_world_matrix(self.world.get_obstacles())
 
 
     def set_phidias_agent(self, _phidias_agent):

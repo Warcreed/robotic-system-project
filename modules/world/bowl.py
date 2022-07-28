@@ -12,7 +12,7 @@ class Bowl:
         self.__w = Pose.pixel_scale(Bowl.WIDTH)
         self.__h = Pose.pixel_scale(Bowl.HEIGHT)
         (x, y) = self.__pose.to_pixel()
-        self.__points = QtGui.QPolygon([        
+        self.__polygon = QtGui.QPolygon([        
             QtCore.QPoint(x, y),
             QtCore.QPoint(x + 15, y + self.__h),
             QtCore.QPoint(x + self.__w - 15, y + self.__h),
@@ -25,4 +25,4 @@ class Bowl:
     def paint(self, qp):
         qp.setPen(QtGui.QColor(179, 163, 126))
         qp.setBrush(QtGui.QColor(228, 208, 163))
-        qp.drawPolygon(self.__points)
+        qp.drawPolygon(self.__polygon)

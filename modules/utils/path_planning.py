@@ -6,9 +6,6 @@ from modules.world.world import World
 class NF1:
     def __init__(self, resolution):
         self._world_matrix = []
-        px_world_height = Pose.pixel_scale(World.HEIGHT)
-        px_world_width = Pose.pixel_scale(World.WIDTH)
-       
         self.x_gap = World.WIDTH / resolution
         self.y_gap = World.HEIGHT / resolution
 
@@ -21,6 +18,24 @@ class NF1:
                 x_temp += self.x_gap
             self._world_matrix.append(temp_row)            
             y_temp += self.y_gap
+
+    def set_is_obstacle_for_world_matrix(self, obstacles):
+        half_x_gap = self.x_gap / 2
+        half_y_gap = self.y_gap / 2
+        for els in self._world_matrix:
+            for el in els:
+                for obst in obstacles:
+                    el.set_is_obstacle(obst.get_polygon().intersects(
+                        QtGui.QPolygon(
+                            QtCore.QRect(
+                                QtCore.QPoint(el.x - half_x_gap, el.y - half_y_gap),
+                                QtCore.QPoint(el.x + half_x_gap, el.y + half_y_gap),
+                            ))))
+                print(el.x, el.y)
+                print(el.is_obstacle)
+                print()
+                    
+               
         
     def paint(self, qp):
         qp.setPen(QtCore.Qt.blue)
@@ -47,10 +62,12 @@ class NF1:
         for els in self._world_matrix:
             for el in els:
                 qp.drawText(Pose.pixel_scale(el.x), Pose.pixel_scale(el.y), str(1 if el.is_obstacle else 0))
-                el.x
 
 class NF1Cell:
     def __init__(self, x, y, is_obstacle):
         self.x = x
         self.y = y
         self.is_obstacle = is_obstacle
+
+    def set_is_obstacle(self, value):
+        self.is_obstacle = value

@@ -21,7 +21,7 @@ class Obstacle:
         self.__w = Pose.pixel_scale(w)
         self.__h = Pose.pixel_scale(h)
         (x, y) = self.__pose.to_pixel()
-        self.__points = QtGui.QPolygon([
+        self.__polygon = QtGui.QPolygon([
             # QtCore.QPoint(random.uniform(x, x + self.__w), y),
             # QtCore.QPoint(x, random.uniform(y, y + self.__h)),
             # QtCore.QPoint(random.uniform(x, x + self.__w), y + self.__h),
@@ -31,6 +31,9 @@ class Obstacle:
             QtCore.QPoint(x + POLYGON_TYPE_ARRAY[type]["bottom"], y + self.__h),
             QtCore.QPoint(x + self.__w, y + POLYGON_TYPE_ARRAY[type]["right"]),
         ])
+
+    def get_polygon(self):
+        return self.__polygon
 
     def get_pose(self):
         return self.__pose.get_pose()
@@ -48,7 +51,7 @@ class Obstacle:
 
         qp.setTransform(t)
 
-        qp.drawPolygon(self.__points)
+        qp.drawPolygon(self.__polygon)
 
         # qp.drawLine(x, y, x + self.__w, y)
         # qp.drawLine(x, y, x, y + self.__h)
