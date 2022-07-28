@@ -90,7 +90,8 @@ class MainWindow(QWidget):
             Pose(0.11, 0.28, 65),
             Pose(0.09, 0.27, 130),            
         ]
-        self.nf1 = NF1(20)
+        self.nf1 = NF1(25)
+        self.print_nf1 = True
 
 
     def set_phidias_agent(self, _phidias_agent):
@@ -176,7 +177,8 @@ class MainWindow(QWidget):
 
         qp.setPen(QtCore.Qt.black)
         self.painter.paint(qp, self.t)
-        self.nf1.paint(qp)
+        if self.print_nf1:
+            self.nf1.paint(qp)
         self.world.paint(qp)
 
 
