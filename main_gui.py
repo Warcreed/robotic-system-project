@@ -90,10 +90,11 @@ class MainWindow(QWidget):
             Pose(0.11, 0.28, 65),
             Pose(0.09, 0.27, 130),            
         ]
-        self.nf1 = NF1(3)
+        self.nf1 = NF1(30)
         self.print_nf1 = True
         self.nf1.set_is_obstacle_for_world_matrix(self.world.get_obstacles())
-
+        self.nf1.set_bowl_as_obstacle_for_world_matrix(self.world.get_bowl())
+        self.nf1.run_nf1_for_taget_xy(target_x, target_y)
 
     def set_phidias_agent(self, _phidias_agent):
         self._phidias_agent = _phidias_agent
@@ -107,6 +108,7 @@ class MainWindow(QWidget):
         # block = self.world.get_block_slot_at(block_index)
         self.notification = False
         (target_x, target_y, target_alpha_deg) = self.block_poses[block_index].get_pose()
+        self.nf1.run_nf1_for_taget_xy(target_x, target_y)
         self.arm.set_target_xy_a(target_x, target_y, target_alpha_deg)
 
     def sense_block_presence(self): #da sistemare
@@ -177,11 +179,10 @@ class MainWindow(QWidget):
         # qp.drawLine(900, 50, 900, 500)
 
         qp.setPen(QtCore.Qt.black)
-        self.painter.paint(qp, self.t)
+        self.painter.paint(qp, self.t)        
+        self.world.paint(qp)
         if self.print_nf1:
             self.nf1.paint(qp)
-        self.world.paint(qp)
-
 
         qp.end()
 
