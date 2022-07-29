@@ -41,6 +41,7 @@ class BlockSlot:
 
        qp.setTransform(t)
        qp.drawRect(x, y - self.__h, self.__w, self.__h)
+       qp.resetTransform()
 
 class Block:
 
@@ -111,5 +112,6 @@ class Block:
 
         qp.setTransform(t)
         qp.drawRect(x, y - self.__h, self.__w, self.__h)
+        qp.resetTransform()
 
 
