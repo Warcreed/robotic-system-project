@@ -22,6 +22,9 @@ class Bowl:
     def get_pose(self):
         return self.__pose.get_pose()
 
+    def intersects(self, polygon):
+        return self.__polygon.intersects(polygon)
+
     def paint(self, qp):
         qp.setPen(QtGui.QColor(179, 163, 126))
         qp.setBrush(QtGui.QColor(228, 208, 163))

@@ -13,13 +13,13 @@ class World:
     def __init__(self, ui):
         self.__blocks = [ ]
         self.__obstacles = [ 
-            Obstacle(x = 0.3, y = 0.1, a = 0, type = 2),
-            Obstacle(x = 0.31, y = 0.23, a = 0, type = 1),
-            Obstacle(x = 0.24, y = 0.27, a = -45, type = 0),
-            Obstacle(x = 0.03, y = 0.38, a = 45, type = 4),
-            Obstacle(x = -0.02, y = 0.335, a = 0, type = 4),
-            Obstacle(x = 0.15, y = 0.095, a = -45, type = 2, w = 0.055, h = 0.055),
-            ]
+            Obstacle(x = 220, y = 365, type = 0),
+            Obstacle(x = 420, y = 350, type = 1),
+            Obstacle(x = 430, y = 210, type = 2),
+            Obstacle(x = 309, y = 165, type = 3),
+            Obstacle(x = 218, y = 64, type = 4),
+            Obstacle(x = 100, y = 110, type = 5)
+        ]
         self.__bowl = Bowl(x = 0.04, y = Bowl.HEIGHT + World.FLOOR_LEVEL, a = 0)
         self.__block_slots = [
             BlockSlot(x = 0.145, y = 0.064, a = 0),       
@@ -43,6 +43,9 @@ class World:
 
     def get_obstacles(self):
         return self.__obstacles
+
+    def get_bowl(self):
+        return self.__bowl
 
     def new_block(self, uColor):
         slot = random.choice(self.__block_slots)
