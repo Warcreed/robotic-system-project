@@ -31,6 +31,14 @@ COLOR_NAMES = [ 'red',
                 'blue',
                 ]
 
+# TODO: ingrandire gli ostacoli
+# TODO: far contare i block_slot come ostacoli
+# TODO: "allungare" il sensore di rilevazione colore blocchi
+# TODO: far preferire la strada di fronte alla cella di arrivo, se possibile
+# TODO: rendere smooth il passaggio tra le spezzate
+
+
+
 class MainWindow(QWidget):
 
     def __init__(self):
@@ -38,7 +46,7 @@ class MainWindow(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(0, 0, 1000, 600)
+        self.setGeometry(0, 0, 800, 600)
         self.setWindowTitle('Robotic Arm Project - Danilo Santitto')
         self.show()
 
@@ -52,16 +60,10 @@ class MainWindow(QWidget):
         self.use_trajectory = True
         self.use_angle_interpolation = False
 
-        self.trajectory = Trajectory3(1.0, 1.5, 1.5)
+        self.trajectory = Trajectory3(1.5, 0.8, 0.8)
 
         self.arm = ThreeJointsArm(self.trajectory, self.use_profile)
         self.painter = ThreeJointsArmPainter(self.arm)
-
-        target_x = 0.1
-        target_y = 0.15
-        target_alpha = -90
-
-        self.arm.set_target_xy_a(target_x, target_y, target_alpha)
 
         self.world = World(self)
         self.px_world_height = Pose.pixel_scale(World.HEIGHT)
@@ -90,26 +92,38 @@ class MainWindow(QWidget):
             Pose(0.11, 0.28, 65),
             Pose(0.09, 0.27, 130),            
         ]
-        self.nf1 = NF1(30)
-        self.print_nf1 = True
+        self.nf1 = NF1(35)
+        self.print_nf1 = False
         self.nf1.set_is_obstacle_for_world_matrix(self.world.get_obstacles())
         self.nf1.set_bowl_as_obstacle_for_world_matrix(self.world.get_bowl())
-        self.nf1.run_nf1_for_taget_xy(target_x, target_y)
+        self.target_alpha_deg = 0
+
+        target_x = 0.1
+        target_y = 0.15
+        target_alpha = -90
+
+        self.arm.set_target_xy_a(target_x, target_y, target_alpha)
+
 
     def set_phidias_agent(self, _phidias_agent):
         self._phidias_agent = _phidias_agent
 
     def go_to(self,target_x, target_y, target_alpha):
         self.notification = False
-        self.arm.set_target_xy_a(target_x, target_y, target_alpha)
+        self.target_alpha_deg = target_alpha
+        self.nf1.run_nf1_for_taget_xy(target_x, target_y)
+        self.__move_to_next_cell()
     
     def go_to_block_slot(self, block_index):
-        # add moving to target
-        # block = self.world.get_block_slot_at(block_index)
         self.notification = False
-        (target_x, target_y, target_alpha_deg) = self.block_poses[block_index].get_pose()
+        (target_x, target_y, self.target_alpha_deg) = self.block_poses[block_index].get_pose()
         self.nf1.run_nf1_for_taget_xy(target_x, target_y)
-        self.arm.set_target_xy_a(target_x, target_y, target_alpha_deg)
+        self.__move_to_next_cell()
+
+    def __move_to_next_cell(self):
+        (x, y) = self.arm.get_pose()[1]
+        next_cell = self.nf1.get_next_cell(x, y) # get next NF1Cell
+        self.arm.set_target_xy_a(next_cell.x, next_cell.y, self.target_alpha_deg)
 
     def sense_block_presence(self): #da sistemare
         if self._phidias_agent is not None:
@@ -146,10 +160,13 @@ class MainWindow(QWidget):
     def go(self):
         if self.show_telemetry:
             self.evaluate_telemetry()
-
+        #print(self.trajectory.target_got)
         if self.trajectory.target_got:
-            if not(self.notification):
-                self.notify_target_got()
+            if self.nf1.check_target_got():
+                if not(self.notification):
+                    self.notify_target_got()
+            elif self.nf1.nf1_path_active:
+                self.__move_to_next_cell()
 
         self.arm.evaluate_trajectory(self.delta_t)
 
@@ -171,12 +188,6 @@ class MainWindow(QWidget):
         qp.setPen(QtGui.QColor(255,255,255))
         qp.setBrush(QtGui.QColor(255,255,255))
         qp.drawRect(event.rect())
-
-        qp.setPen(QtCore.Qt.black)
-        qp.drawLine(50, int(self.px_world_floor_level), int(self.px_world_width + 50), int(self.px_world_floor_level))
-        qp.drawLine(50, int(self.px_world_height + 50), 50, 50)
-        # qp.drawLine(50, 50, 900, 50)
-        # qp.drawLine(900, 50, 900, 500)
 
         qp.setPen(QtCore.Qt.black)
         self.painter.paint(qp, self.t)        

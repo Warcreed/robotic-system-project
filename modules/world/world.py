@@ -3,6 +3,7 @@ import math
 from .block import *
 from .obstacle import *
 from .bowl import *
+import random
 
 class World:
 

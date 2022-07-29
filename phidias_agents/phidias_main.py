@@ -143,6 +143,7 @@ class main(Agent):
         +mode(''),
         go(X, Y, A)
       ]
+      
 
 agent_main = main()
 agent_main.start()
