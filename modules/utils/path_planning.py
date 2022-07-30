@@ -32,7 +32,7 @@ class NF1:
         for els in self._world_matrix:
             for el in els:
                 for obst in obstacles:
-                    if obst.intersects(
+                    if obst.intersects_scaled_poly(
                         QtGui.QPolygon(QtCore.QRect(
                                 QtCore.QPoint(Pose.pixel_scale(el.x - half_x_gap + self.x_shift), Pose.pixel_scale(World.HEIGHT - el.y - half_y_gap + self.y_shift)),
                                 QtCore.QPoint(Pose.pixel_scale(el.x + half_x_gap + self.x_shift), Pose.pixel_scale(World.HEIGHT - el.y + half_y_gap + self.y_shift)),
