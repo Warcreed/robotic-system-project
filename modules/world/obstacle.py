@@ -1,5 +1,4 @@
 from PyQt5 import QtGui, QtCore
-# from modules.utils.pose import *
 
 POLYGON_TYPE_ARRAY = [
     (   

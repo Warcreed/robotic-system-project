@@ -116,7 +116,7 @@ class NF1:
     #                 j_index = j                
     #     return (i_index, j_index)
 
-    # ricorsiva
+    # spreading ricorsivo del valore secondo NF1
     def __nf1_adjacent_cells_value_spreading(self, i, j, value= 0):
         if (i < 0 or i >= self.resolution) or (j < 0 or j >= self.resolution):
             return

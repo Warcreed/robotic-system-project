@@ -84,9 +84,9 @@ class World:
     def collect_block(self):
         (x,y,a) = self.ui.arm.get_pose_xy_a().get_pose()
         L = self.ui.arm.element_3_model.L
-        x_1 = (2.2*L) * math.cos(a) + x       # sposta punto di controllo su end effector
-        y_1 = (2.2*L) * math.sin(a) + y       # simula la presenza di un raggio o vettore che interseca il blocco
-        for b in self.__blocks:               # rilevarne il colore
+        x_1 = (2.2*L) * math.cos(a) + x       
+        y_1 = (2.2*L) * math.sin(a) + y       
+        for b in self.__blocks:               
             (xb,yb,ab) = b.get_pose()           
             if (x_1 >= xb)and(x_1 <= (xb + Block.WIDTH)) and (y_1 >= yb)and(y_1 <= (yb + Block.WIDTH)):
                 self.collected_block_index = self.__blocks.index(b)
