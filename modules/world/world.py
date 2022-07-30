@@ -36,10 +36,6 @@ class World:
         ]
 
         self.ui = ui
-
-        # print check
-        self.print_block_slots = True
-
         self.collected_block_index = None
 
     def get_obstacles(self):
@@ -107,7 +103,7 @@ class World:
                  self.__blocks = []
         return 
 
-    def paint(self, qp):
+    def paint(self, qp, print_block_slots= False, print_scaled_obstacles= False):
         qp.setPen(QtGui.QColor(217,95,14))
         y = Pose.xy_to_pixel(0, World.FLOOR_LEVEL)[1]
         qp.drawLine(50, y, 1450, y)
@@ -115,8 +111,8 @@ class World:
 
         self.__bowl.paint(qp)
         for o in self.__obstacles:
-            o.paint(qp)
-        if self.print_block_slots:
+            o.paint(qp, print_scaled_obstacles)
+        if print_block_slots:
             for b in self.__block_slots:
                 b.paint(qp)
         for b in self.__blocks:

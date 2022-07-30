@@ -134,7 +134,7 @@ class NF1:
                 return True
         return False
     
-    def paint(self, qp):
+    def paint(self, qp, print_obstacle=False, print_map_values=False, print_coord=False):
         qp.setPen(QtCore.Qt.blue)
 
         for i in range(len(self._world_matrix[0])):   # last row and last col is not printed    
@@ -158,23 +158,25 @@ class NF1:
                 str(i - 1))        
         
         # print obstacle
-        # qp.setFont(QtGui.QFont("times",10)); 
-        # for els in self._world_matrix:
-        #     for el in els:
-        #         qp.drawText(Pose.pixel_scale(el.x + self.x_shift), Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(el.is_obstacle()))
+        if print_obstacle:
+            qp.setFont(QtGui.QFont("times",10)); 
+            for els in self._world_matrix:
+                for el in els:
+                    qp.drawText(Pose.pixel_scale(el.x + self.x_shift), Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(el.is_obstacle()))
 
         # print map values
-        for els in self._world_matrix:
-            for el in els:
-                qp.drawText(
-                    Pose.pixel_scale(el.x + self.x_shift), 
-                    Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(el.get_value()))
-        
-        # for els in self._world_matrix:
-        #     for el in els:
-        #         qp.drawText(
-        #             Pose.pixel_scale(el.x + self.x_shift), 
-        #             Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(round(el.x, 3)) + "/" + str(round(el.y, 3)))
+        if print_map_values:
+            for els in self._world_matrix:
+                for el in els:
+                    qp.drawText(
+                        Pose.pixel_scale(el.x + self.x_shift), 
+                        Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(el.get_value()))
+        if print_coord:
+            for els in self._world_matrix:
+                for el in els:
+                    qp.drawText(
+                        Pose.pixel_scale(el.x + self.x_shift), 
+                        Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(round(el.x, 3)) + "/" + str(round(el.y, 3)))
 
         # qp.setPen(QtCore.Qt.blue)
         # qp.setBrush(QtCore.Qt.red)

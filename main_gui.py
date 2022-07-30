@@ -31,13 +31,8 @@ COLOR_NAMES = [ 'red',
                 'blue',
                 ]
 
-# TODO: ingrandire gli ostacoli
-# TODO: far contare i block_slot come ostacoli
-# TODO: "allungare" il sensore di rilevazione colore blocchi
 # TODO: far preferire la strada di fronte alla cella di arrivo, se possibile
 # TODO: rendere smooth il passaggio tra le spezzate
-
-
 
 class MainWindow(QWidget):
 
@@ -71,7 +66,7 @@ class MainWindow(QWidget):
         self.px_world_floor_level = Pose.pixel_scale(World.FLOOR_LEVEL)
 
         self.telemetry = Telemetry()
-        self.show_telemetry = False
+        self.seconds_show_telemetry = 10
 
         self._timer_painter = QtCore.QTimer(self)
         self._timer_painter.timeout.connect(self.go)
@@ -93,7 +88,6 @@ class MainWindow(QWidget):
             Pose(0.09, 0.27, 130),            
         ]
         self.nf1 = NF1(35)
-        self.print_nf1 = False
         self.nf1.set_is_obstacle_for_world_matrix(self.world.get_obstacles())
         self.nf1.set_bowl_as_obstacle_for_world_matrix(self.world.get_bowl())
         self.target_alpha_deg = 0
@@ -101,9 +95,25 @@ class MainWindow(QWidget):
         target_x = 0.1
         target_y = 0.15
         target_alpha = -90
-
         self.arm.set_target_xy_a(target_x, target_y, target_alpha)
 
+        # print check
+
+        ## telemetry
+        self.show_telemetry = False
+        self.print_telemetry_base_joint= True
+        self.print_telemetry_second_joint= False
+        self.print_telemetry_end_eff_joint= False
+
+        ## obstacles
+        self.print_block_slots = False
+        self.print_scaled_obstacle = False
+        
+        ## NF1
+        self.print_nf1 = False
+        self.print_nf1_obstacle = False
+        self.print_nf1_map_values = False
+        self.print_nf1_coord = False
 
     def set_phidias_agent(self, _phidias_agent):
         self._phidias_agent = _phidias_agent
@@ -160,7 +170,7 @@ class MainWindow(QWidget):
     def go(self):
         if self.show_telemetry:
             self.evaluate_telemetry()
-        #print(self.trajectory.target_got)
+
         if self.trajectory.target_got:
             if self.nf1.check_target_got():
                 if not(self.notification):
@@ -178,8 +188,8 @@ class MainWindow(QWidget):
         second_joint = (self.arm.theta2, self.arm.element_2_model.theta, self.arm.element_2_control.w_target, self.arm.element_2_model.w, self.arm.element_2_control.torque)
         end_effector_joint = (self.arm.theta3, self.arm.element_3_model.theta, self.arm.element_3_control.w_target, self.arm.element_3_model.w, self.arm.element_3_control.torque)
         self.telemetry.gather(self.t, base_joint, second_joint, end_effector_joint)
-        if self.t > 7:
-           self.telemetry.show(print_base_joint= True, print_second_joint= False, print_end_eff_joint= False)
+        if self.t > self.seconds_show_telemetry:
+           self.telemetry.show(print_base_joint= self.print_telemetry_base_joint, print_second_joint= self.print_telemetry_second_joint, print_end_eff_joint= self.print_telemetry_end_eff_joint)
            self.show_telemetry = False
 
     def paintEvent(self, event):
@@ -191,9 +201,9 @@ class MainWindow(QWidget):
 
         qp.setPen(QtCore.Qt.black)
         self.painter.paint(qp, self.t)        
-        self.world.paint(qp)
+        self.world.paint(qp, print_block_slots= self.print_block_slots, print_scaled_obstacles= self.print_scaled_obstacle)
         if self.print_nf1:
-            self.nf1.paint(qp)
+            self.nf1.paint(qp, print_obstacle= self.print_nf1_obstacle ,print_map_values=self.print_nf1_map_values , print_coord=self.print_nf1_coord)
 
         qp.end()
 
