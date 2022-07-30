@@ -118,9 +118,6 @@ class NF1:
 
     # spreading ricorsivo del valore secondo NF1
     def __nf1_adjacent_cells_value_spreading(self, i, j, value= 0):
-        if (i < 0 or i >= self.resolution) or (j < 0 or j >= self.resolution):
-            return
-       
         self._world_matrix[i][j].set_value(value)
         for k in range(i-1, i+2):
             for p in range (j-1, j+2):
