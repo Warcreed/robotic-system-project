@@ -23,9 +23,9 @@ class World:
         ]
         self.__bowl = Bowl(x = 0.04, y = Bowl.HEIGHT + World.FLOOR_LEVEL, a = 0)
         self.__block_slots = [
-            BlockSlot(x = 0.145, y = 0.064, a = 0),       
-            BlockSlot(x = 0.20, y = World.FLOOR_LEVEL, a = 0),
-            BlockSlot(x = 0.24, y = World.FLOOR_LEVEL, a = 0),
+            BlockSlot(x = 0.12, y = 0.065, a = 0),       
+            BlockSlot(x = 0.22, y = World.FLOOR_LEVEL, a = 0),
+            BlockSlot(x = 0.26, y = World.FLOOR_LEVEL, a = 0),
             BlockSlot(x = 0.3, y = 0.1, a = 0),       
             BlockSlot(x = 0.285, y = 0.18, a = 90),       
             BlockSlot(x = 0.25, y = 0.25, a = 101),       

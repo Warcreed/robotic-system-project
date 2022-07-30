@@ -81,10 +81,10 @@ class MainWindow(QWidget):
         self._phidias_agent = None
 
         self.block_poses = [
-            Pose(0.115, 0.0675, 0),
-            Pose(0.215, 0.032, -90),
-            Pose(0.255, 0.032, -90),
-            Pose(0.27, 0.11, 0),
+            Pose(0.095, 0.0676, 0),
+            Pose(0.235, 0.032, -90),
+            Pose(0.275, 0.032, -90),
+            Pose(0.265, 0.11, 0),
             Pose(0.265, 0.19, 0),
             Pose(0.275, 0.215, 100),
             Pose(0.175, 0.295, 0),
