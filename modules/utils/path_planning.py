@@ -71,8 +71,8 @@ class NF1:
         (i, j) = self.__get_cell_index_by_xy(x, y)
         # prendere la cella successiva
         min = math.inf
-        i_target = None
-        j_target = None
+        i_target = i
+        j_target = j
         for k in range(i-1, i+2):
             for p in range (j-1, j+2):
                 if k >= 0 and k < self.resolution and p >= 0 and p < self.resolution:                    
