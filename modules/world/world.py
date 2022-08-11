@@ -60,7 +60,7 @@ class World:
         return self.__block_slots[index]
 
     def sense_block_presence(self):
-        (x,y,a) = self.ui.arm.get_pose_xy_a().get_pose()
+        (x,y,a) = self.ui.arm.get_pose_xy_a()
         L = self.ui.arm.element_3_model.L
         x_1 = (2.2*L) * math.cos(a) + x       # sposta punto di controllo su end effector
         y_1 = (2.2*L) * math.sin(a) + y       # simula la presenza di un raggio o vettore che interseca il blocco
@@ -71,7 +71,7 @@ class World:
         return False
 
     def sense_color(self):
-        (x,y,a) = self.ui.arm.get_pose_xy_a().get_pose()
+        (x,y,a) = self.ui.arm.get_pose_xy_a()
         L = self.ui.arm.element_3_model.L
         x_1 = (2.2*L) * math.cos(a) + x       # sposta punto di controllo su end effector
         y_1 = (2.2*L) * math.sin(a) + y       # simula la presenza di un raggio o vettore che interseca il blocco
@@ -82,7 +82,7 @@ class World:
         return None
 
     def collect_block(self):
-        (x,y,a) = self.ui.arm.get_pose_xy_a().get_pose()
+        (x,y,a) = self.ui.arm.get_pose_xy_a()
         L = self.ui.arm.element_3_model.L
         x_1 = (2.2*L) * math.cos(a) + x       
         y_1 = (2.2*L) * math.sin(a) + y       
