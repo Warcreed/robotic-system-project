@@ -17,11 +17,11 @@ class NF1:
         self.y_gap = World.HEIGHT / resolution
 
         y_temp = World.HEIGHT - ((World.HEIGHT / resolution) / 2)
-        for i in range(resolution):
+        for i in range(resolution):                                 # costruzione matrice secondo la risoluzione
             temp_row = []
             x_temp = ((World.WIDTH / resolution) / 2)
             for j in range(resolution):
-                temp_row.append(NF1Cell(x= x_temp, y= y_temp))
+                temp_row.append(NF1Cell(x= x_temp, y= y_temp))      # ogni cella è una NF1Cell
                 x_temp += self.x_gap
             self._world_matrix.append(temp_row)            
             y_temp -= self.y_gap
@@ -73,6 +73,7 @@ class NF1:
         min = math.inf
         i_target = i
         j_target = j
+        self.current_cell = self._world_matrix[i_target][j_target]
         for k in range(i-1, i+2):
             for p in range (j-1, j+2):
                 if k >= 0 and k < self.resolution and p >= 0 and p < self.resolution:                    
@@ -80,8 +81,7 @@ class NF1:
                         min = self._world_matrix[k][p].get_value()
                         i_target = k
                         j_target = p
-        self.current_cell = self._world_matrix[i_target][j_target]
-        return self.current_cell
+        return self._world_matrix[i_target][j_target]
 
 
     def __get_cell_index_by_xy(self, x, y):
