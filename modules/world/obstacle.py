@@ -1,13 +1,94 @@
 from PyQt5 import QtGui, QtCore
-from modules.utils.pose import *
-import random
 
 POLYGON_TYPE_ARRAY = [
-    { "top" : 40, "left": 40, "right": 30, "bottom": 30},
-    { "top" : 0, "left": 85, "right": 0, "bottom": 85},
-    { "top" : 0, "left": 0, "right": 0, "bottom": 0},
-    { "top" : 20, "left": 5, "right": 20, "bottom": 5},
-    { "top" : 40, "left": 35, "right": 55, "bottom": 20},
+    (   
+        QtGui.QPolygon([
+            QtCore.QPoint(0, 0),
+            QtCore.QPoint(38, -35),
+            QtCore.QPoint(75, 0),
+            QtCore.QPoint(75, 40),
+            QtCore.QPoint(50, 40),
+            QtCore.QPoint(50, 0),
+        ]),
+        QtGui.QPolygon([
+            QtCore.QPoint(-20, 7),
+            QtCore.QPoint(38, -60),
+            QtCore.QPoint(110, 0),
+            QtCore.QPoint(110, 65),
+            QtCore.QPoint(45, 65),
+            QtCore.QPoint(45, 5),
+        ]),
+    ),
+    (
+        QtGui.QPolygon([
+            QtCore.QPoint(0, 0),
+            QtCore.QPoint(100, 0),
+            QtCore.QPoint(0, 100),
+        ]),
+        QtGui.QPolygon([
+            QtCore.QPoint(-10, -10),
+            QtCore.QPoint(110, -10),
+            QtCore.QPoint(-10, 110),
+        ]),
+    ),
+    (
+        QtGui.QPolygon([
+            QtCore.QPoint(0, 0),
+            QtCore.QPoint(0, 100),
+            QtCore.QPoint(100, 100),
+            QtCore.QPoint(100, 0),
+        ]),
+        QtGui.QPolygon([
+            QtCore.QPoint(-20, -20),
+            QtCore.QPoint(-20, 120),
+            QtCore.QPoint(120, 120),
+            QtCore.QPoint(120, -20),
+        ]),
+    ),
+    (
+        QtGui.QPolygon([
+            QtCore.QPoint(10, 0),
+            QtCore.QPoint(60, 0),
+            QtCore.QPoint(70, 48),
+            QtCore.QPoint(0, 48),
+        ]),
+        QtGui.QPolygon([
+            QtCore.QPoint(0, -10),
+            QtCore.QPoint(110, -10),
+            QtCore.QPoint(110, 30),
+            QtCore.QPoint(70, 45),
+            QtCore.QPoint(70, 60),
+            QtCore.QPoint(-10, 60),
+        ]),
+    ),
+    (
+        QtGui.QPolygon([
+            QtCore.QPoint(0, 0),
+            QtCore.QPoint(70, 5),
+            QtCore.QPoint(50, 70),
+            QtCore.QPoint(3, 50),
+        ]),
+        QtGui.QPolygon([
+            QtCore.QPoint(-10, -10),
+            QtCore.QPoint(85, 0),
+            QtCore.QPoint(50, 90),
+            QtCore.QPoint(-7, 60),
+        ]),
+    ),
+    (
+        QtGui.QPolygon([
+            QtCore.QPoint(0, 40),
+            QtCore.QPoint(40, 5),
+            QtCore.QPoint(84, 60),
+            QtCore.QPoint(20, 95),
+        ]),
+        QtGui.QPolygon([
+            QtCore.QPoint(-15, 40),
+            QtCore.QPoint(40, -10),
+            QtCore.QPoint(90, 60),
+            QtCore.QPoint(20, 105),
+        ]),
+    )
 ]
 
 class Obstacle:
@@ -15,42 +96,35 @@ class Obstacle:
     WIDTH = 0.085
     HEIGHT = 0.085
 
-    def __init__(self, x, y, a, type, w = WIDTH, h = HEIGHT):
-        self.__pose = Pose()
-        self.__pose.set_pose(x,y,a)
-        self.__w = Pose.pixel_scale(w)
-        self.__h = Pose.pixel_scale(h)
-        (x, y) = self.__pose.to_pixel()
-        self.__points = QtGui.QPolygon([
-            # QtCore.QPoint(random.uniform(x, x + self.__w), y),
-            # QtCore.QPoint(x, random.uniform(y, y + self.__h)),
-            # QtCore.QPoint(random.uniform(x, x + self.__w), y + self.__h),
-            # QtCore.QPoint(x + self.__w, random.uniform(y, y + self.__h)),
-            QtCore.QPoint(x + POLYGON_TYPE_ARRAY[type]["top"], y),
-            QtCore.QPoint(x, y + POLYGON_TYPE_ARRAY[type]["left"]),
-            QtCore.QPoint(x + POLYGON_TYPE_ARRAY[type]["bottom"], y + self.__h),
-            QtCore.QPoint(x + self.__w, y + POLYGON_TYPE_ARRAY[type]["right"]),
-        ])
+    def __init__(self, x, y, type):
+        self.__polygon = POLYGON_TYPE_ARRAY[type][0]
+        self.__scaled_polygon = POLYGON_TYPE_ARRAY[type][1]       
+        for point in self.__polygon:
+            point.setX(x + point.x())
+            point.setY(y + point.y())
+        for point in self.__scaled_polygon:
+            point.setX(x + point.x())
+            point.setY(y + point.y())
 
-    def get_pose(self):
-        return self.__pose.get_pose()
+    def get_polygon(self):
+        return self.__polygon
+    
+    def get_scaled_polygon(self):
+        return self.__polygon
+    
+    def intersects(self, polygon):
+        return self.__polygon.intersects(polygon)
 
-    def paint(self, qp):
+    def intersects_scaled_poly(self, polygon):
+        return self.__scaled_polygon.intersects(polygon)
+
+    def paint(self, qp, print_scaled):
+
+        if print_scaled:
+            qp.setPen(QtCore.Qt.black)
+            qp.setBrush(QtGui.QColor(235, 171, 52))
+            qp.drawPolygon(self.__scaled_polygon)
+
         qp.setPen(QtCore.Qt.black)
         qp.setBrush(QtGui.QColor(211, 211, 211))
-
-        (x, y) = self.__pose.to_pixel()
-
-        t = QtGui.QTransform()
-        t.translate(x + self.__w/2, y - self.__h/2)
-        t.rotate(-self.__pose.get_a())
-        t.translate(-(x + self.__w/2), -(y - self.__h/2))
-
-        qp.setTransform(t)
-
-        qp.drawPolygon(self.__points)
-
-        # qp.drawLine(x, y, x + self.__w, y)
-        # qp.drawLine(x, y, x, y + self.__h)
-        # qp.drawLine(x, y + self.__h, x + self.__w, y + self.__h)
-        # qp.drawLine(x + self.__w, y + self.__h, x + self.__w, y)
+        qp.drawPolygon(self.__polygon)

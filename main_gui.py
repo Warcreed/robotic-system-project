@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import QApplication, QWidget
 from modules.manipulator.manipulator import *
 from modules.manipulator.manipulator_painters import *
 from modules.utils.telemetry import *
+from modules.utils.path_planning import *
 from modules.world.world import *
 from modules.phidias.phidias_interface import *
 
@@ -30,6 +31,9 @@ COLOR_NAMES = [ 'red',
                 'blue',
                 ]
 
+# TODO: far preferire la strada di fronte alla cella di arrivo, se possibile
+# TODO: rendere smooth il passaggio tra le spezzate
+
 class MainWindow(QWidget):
 
     def __init__(self):
@@ -37,7 +41,7 @@ class MainWindow(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(0, 0, 1000, 600)
+        self.setGeometry(0, 0, 800, 600)
         self.setWindowTitle('Robotic Arm Project - Danilo Santitto')
         self.show()
 
@@ -55,16 +59,13 @@ class MainWindow(QWidget):
         self.arm = ThreeJointsArm(self.trajectory)
         self.painter = ThreeJointsArmPainter(self.arm)
 
-        target_x = 0.1
-        target_y = 0.15
-        target_alpha = -90
-
-        self.arm.set_target_xy_a(target_x, target_y, target_alpha)
-
         self.world = World(self)
+        self.px_world_height = Pose.pixel_scale(World.HEIGHT)
+        self.px_world_width = Pose.pixel_scale(World.WIDTH)
+        self.px_world_floor_level = Pose.pixel_scale(World.FLOOR_LEVEL)
 
         self.telemetry = Telemetry()
-        self.show_telemetry = True
+        self.seconds_show_telemetry = 10
 
         self._timer_painter = QtCore.QTimer(self)
         self._timer_painter.timeout.connect(self.go)
@@ -74,10 +75,10 @@ class MainWindow(QWidget):
         self._phidias_agent = None
 
         self.block_poses = [
-            Pose(0.115, 0.0675, 0),
-            Pose(0.215, 0.032, -90),
-            Pose(0.255, 0.032, -90),
-            Pose(0.27, 0.11, 0),
+            Pose(0.095, 0.0676, 0),
+            Pose(0.235, 0.032, -90),
+            Pose(0.275, 0.032, -90),
+            Pose(0.265, 0.11, 0),
             Pose(0.265, 0.19, 0),
             Pose(0.275, 0.215, 100),
             Pose(0.175, 0.295, 0),
@@ -85,20 +86,53 @@ class MainWindow(QWidget):
             Pose(0.11, 0.28, 65),
             Pose(0.09, 0.27, 130),            
         ]
+        self.nf1 = NF1(35)
+        self.nf1.set_is_obstacle_for_world_matrix(self.world.get_obstacles())
+        self.nf1.set_bowl_as_obstacle_for_world_matrix(self.world.get_bowl())
+        self.target_alpha_deg = 0
+
+        target_x = 0.1
+        target_y = 0.15
+        target_alpha = -90
+        self.arm.set_target_xy_a(target_x, target_y, target_alpha)
+
+        # print check
+
+        ## telemetry
+        self.show_telemetry = False
+        self.print_telemetry_base_joint= True
+        self.print_telemetry_second_joint= False
+        self.print_telemetry_end_eff_joint= False
+
+        ## obstacles
+        self.print_block_slots = False
+        self.print_scaled_obstacle = False
+        
+        ## NF1
+        self.print_nf1 = False
+        self.print_nf1_obstacle = False
+        self.print_nf1_map_values = False
+        self.print_nf1_coord = False
 
     def set_phidias_agent(self, _phidias_agent):
         self._phidias_agent = _phidias_agent
 
     def go_to(self,target_x, target_y, target_alpha):
         self.notification = False
-        self.arm.set_target_xy_a(target_x, target_y, target_alpha)
+        self.target_alpha_deg = target_alpha
+        self.nf1.run_nf1_for_taget_xy(target_x, target_y)
+        self.__move_to_next_cell()
     
     def go_to_block_slot(self, block_index):
-        # add moving to target
-        # block = self.world.get_block_slot_at(block_index)
         self.notification = False
-        (target_x, target_y, target_alpha_deg) = self.block_poses[block_index].get_pose()
-        self.arm.set_target_xy_a(target_x, target_y, target_alpha_deg)
+        (target_x, target_y, self.target_alpha_deg) = self.block_poses[block_index].get_pose()
+        self.nf1.run_nf1_for_taget_xy(target_x, target_y)
+        self.__move_to_next_cell()
+
+    def __move_to_next_cell(self):
+        (x, y) = self.arm.get_pose()[1]
+        next_cell = self.nf1.get_next_cell(x, y) # get next NF1Cell
+        self.arm.set_target_xy_a(next_cell.x, next_cell.y, self.target_alpha_deg)
 
     def sense_block_presence(self): #da sistemare
         if self._phidias_agent is not None:
@@ -136,9 +170,12 @@ class MainWindow(QWidget):
         if self.show_telemetry:
             self.evaluate_telemetry()
 
-        if self.trajectory.phase == VirtualRobot2D.TARGET:
-            if not(self.notification):
-                self.notify_target_got()
+        if self.trajectory.target_got:
+            if self.nf1.check_target_got():
+                if not(self.notification):
+                    self.notify_target_got()
+            elif self.nf1.nf1_path_active:
+                self.__move_to_next_cell()
 
         self.arm.evaluate_trajectory(self.delta_t)
 
@@ -150,8 +187,8 @@ class MainWindow(QWidget):
         second_joint = (self.arm.theta2, self.arm.element_2_model.theta, self.arm.element_2_control.w_target, self.arm.element_2_model.w, self.arm.element_2_control.torque)
         end_effector_joint = (self.arm.theta3, self.arm.element_3_model.theta, self.arm.element_3_control.w_target, self.arm.element_3_model.w, self.arm.element_3_control.torque)
         self.telemetry.gather(self.t, base_joint, second_joint, end_effector_joint)
-        if self.t > 15:
-           self.telemetry.show(print_base_joint= False, print_second_joint= True, print_end_eff_joint= False)
+        if self.t > self.seconds_show_telemetry:
+           self.telemetry.show(print_base_joint= self.print_telemetry_base_joint, print_second_joint= self.print_telemetry_second_joint, print_end_eff_joint= self.print_telemetry_end_eff_joint)
            self.show_telemetry = False
 
     def paintEvent(self, event):
@@ -159,17 +196,13 @@ class MainWindow(QWidget):
         qp.begin(self)
         qp.setPen(QtGui.QColor(255,255,255))
         qp.setBrush(QtGui.QColor(255,255,255))
-        qp.drawRect(event.rect())
-
-        # qp.setPen(QtCore.Qt.black)
-        # qp.drawLine(50, 500, 900, 500)
-        # qp.drawLine(50, 500, 50, 50)
-        # qp.drawLine(50, 50, 900, 50)
-        # qp.drawLine(900, 50, 900, 500)
+        qp.drawRect(event.rect())   # white bg
 
         qp.setPen(QtCore.Qt.black)
-        self.painter.paint(qp, self.t)
-        self.world.paint(qp)
+        self.painter.paint(qp, self.t)        
+        self.world.paint(qp, print_block_slots= self.print_block_slots, print_scaled_obstacles= self.print_scaled_obstacle)
+        if self.print_nf1:
+            self.nf1.paint(qp, print_obstacle= self.print_nf1_obstacle ,print_map_values=self.print_nf1_map_values , print_coord=self.print_nf1_coord)
 
         qp.end()
 

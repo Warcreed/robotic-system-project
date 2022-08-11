@@ -57,7 +57,7 @@ class ThreeJointsArm:
 
         alpha = self.element_1_model.theta + self.element_2_model.theta + self.element_3_model.theta
 
-        # self.pose.set_pose(x2, y2, alpha)
+        self.pose.set_pose(x2, y2, alpha)
 
         return self.pose.get_pose()
 
