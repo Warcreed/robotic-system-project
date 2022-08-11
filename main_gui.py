@@ -197,7 +197,7 @@ class MainWindow(QWidget):
         qp.begin(self)
         qp.setPen(QtGui.QColor(255,255,255))
         qp.setBrush(QtGui.QColor(255,255,255))
-        qp.drawRect(event.rect())
+        qp.drawRect(event.rect())   # white bg
 
         qp.setPen(QtCore.Qt.black)
         self.painter.paint(qp, self.t)        

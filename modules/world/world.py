@@ -106,8 +106,8 @@ class World:
     def paint(self, qp, print_block_slots= False, print_scaled_obstacles= False):
         qp.setPen(QtGui.QColor(217,95,14))
         y = Pose.xy_to_pixel(0, World.FLOOR_LEVEL)[1]
-        qp.drawLine(50, y, 1450, y)
-        qp.drawLine(50, y+1, 1450, y+1)
+        qp.drawLine(50, y, 750, y)
+        qp.drawLine(50, y+1, 750, y+1)
 
         self.__bowl.paint(qp)
         for o in self.__obstacles:
