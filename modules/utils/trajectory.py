@@ -113,6 +113,10 @@ class VirtualRobot:
         self.phase = VirtualRobot.ACCEL
         self.decel_distance = 0.5 * _vmax * _vmax / _dec
 
+    def set_position_target(self, target):
+        self.p_target = target
+        self.phase = VirtualRobot.ACCEL
+
     def evaluate(self, delta_t):
         if self.phase == VirtualRobot.ACCEL:
             self.p = self.p + self.v * delta_t \
@@ -168,8 +172,7 @@ class VirtualRobot2D:
         self.linear_target = math.hypot(dx,dy)
         self.target_heading = math.atan2(dy,dx)
 
-        self.linear_trajectory.p_target = self.linear_target
-        self.phase = None
+        self.linear_trajectory.set_position_target(self.linear_target)
 
     def evaluate(self, delta_t):
         self.linear_trajectory.evaluate(delta_t)

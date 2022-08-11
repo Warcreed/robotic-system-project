@@ -7,17 +7,10 @@ import sys
 sys.path.insert(0, './lib')
 sys.path.insert(0, './modules')
 
-import math
 import random
 
-#
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QApplication, QWidget
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^ use these for Qt5
-#
-#
-
-#from PyQt4 import QtGui, QtCore
 
 from modules.manipulator.manipulator import *
 from modules.manipulator.manipulator_painters import *
@@ -33,6 +26,9 @@ COLOR_NAMES = [ 'red',
 
 # TODO: far preferire la strada di fronte alla cella di arrivo, se possibile
 # TODO: rendere smooth il passaggio tra le spezzate
+# TODO: fare tuning delle variabili per seguire propriamente il virtual robot
+# TODO: check la scelta della cella
+# TODO: check del movimento sul virtual robot
 
 class MainWindow(QWidget):
 
@@ -173,7 +169,7 @@ class MainWindow(QWidget):
         if self.show_telemetry:
             self.evaluate_telemetry()
 
-        if self.trajectory.target_got:
+        if self.trajectory.phase == VirtualRobot2D.TARGET:
             if self.nf1.check_target_got():
                 if not(self.notification):
                     self.notify_target_got()
@@ -208,8 +204,6 @@ class MainWindow(QWidget):
             self.nf1.paint(qp, print_obstacle= self.print_nf1_obstacle ,print_map_values=self.print_nf1_map_values , print_coord=self.print_nf1_coord)
 
         qp.end()
-
-
 
 def main():
 
