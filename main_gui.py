@@ -54,10 +54,10 @@ class MainWindow(QWidget):
         self.use_trajectory = True
         self.use_angle_interpolation = False
 
-        self.trajectory = VirtualRobot2D(_vmax = 0.5, _acc = 0.1, _dec = 0.1)
+        self.trajectory = VirtualRobot2D(_vmax = 1.0, _acc = 0.5, _dec = 0.5)
 
         self.arm = ThreeJointsArm(self.trajectory)
-        self.painter = ThreeJointsArmPainter(self.arm)
+        self.arm_painter = ThreeJointsArmPainter(self.arm)
 
         self.world = World(self)
         self.px_world_height = Pose.pixel_scale(World.HEIGHT)
@@ -97,6 +97,9 @@ class MainWindow(QWidget):
         self.arm.set_target_xy_a(target_x, target_y, target_alpha)
 
         # print check
+
+        ## Manipulator
+        self.print_end_effector_ray = False
 
         ## telemetry
         self.show_telemetry = False
@@ -199,7 +202,7 @@ class MainWindow(QWidget):
         qp.drawRect(event.rect())   # white bg
 
         qp.setPen(QtCore.Qt.black)
-        self.painter.paint(qp, self.t)        
+        self.arm_painter.paint(qp, self.t, print_ray=self.print_end_effector_ray)        
         self.world.paint(qp, print_block_slots= self.print_block_slots, print_scaled_obstacles= self.print_scaled_obstacle)
         if self.print_nf1:
             self.nf1.paint(qp, print_obstacle= self.print_nf1_obstacle ,print_map_values=self.print_nf1_map_values , print_coord=self.print_nf1_coord)
