@@ -59,7 +59,6 @@ def send_belief_http(agent_name, destination, belief, terms, source):
                 'data' : ['belief', [ belief, terms ] ] }
 
     json_payload = json.dumps(payload)
-    #print(json_payload)
     new_url = "http://" + parsed_url.hostname + ":" + str(port)
     r = requests.post(new_url, data=json_payload)
     reply = json.loads(r.text)

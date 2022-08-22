@@ -80,7 +80,7 @@ class Block:
         self.__dropping=True
 
     def follow_end_effector(self, arm):
-        (x,y,a) = arm.get_pose_xy_a().get_pose()
+        (x,y,a) = arm.get_pose_xy_a()
         L = arm.element_3_model.L
         x_1 = (L+L/4) * math.cos(a) + x       # sposta punto di controllo su end effector
         y_1 = (L+L/4) * math.sin(a) + y

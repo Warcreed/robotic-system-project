@@ -72,16 +72,20 @@ class ThreeJointsArm:
                                                  self.element_1_model.L + self.element_2_model.L * math.cos(theta2) )
         theta3 = math.radians(alpha) - theta1 - theta2
         return (theta1, theta2, theta3)
-
-    def set_target_xy_a(self, x_target, y_target, a_target):
+    
+    def set_path(self, path):
+        self.trajectory.set_path(path)
+        
+    def start(self):
         (x_current, y_current, a_current) = self.get_pose_xy_a()
-        # self.trajectory.set_target(p[1][0], p[1][1], alpha, x, y, math.radians(a))
-        self.trajectory.set_target((x_current, y_current), (x_target, y_target), a_target)
+        self.trajectory.start( (x_current, y_current, a_current))
 
     def evaluate_trajectory(self, delta_t):
-        (trajectory_x, trajectory_y, trajectory_a) = self.trajectory.evaluate(delta_t)
-        (self.theta1, self.theta2, self.theta3) = self.inverse_kinematics(trajectory_x, trajectory_y, trajectory_a)
-        if self.theta1 is not None:
-            self.set_target(self.theta1, self.theta2, self.theta3)
-        self.evaluate(delta_t)
+        pose = self.get_pose_xy_a()
+        (trajectory_x, trajectory_y, trajectory_a) = self.trajectory.evaluate(delta_t, pose)
+        if trajectory_x is not None:
+            (self.theta1, self.theta2, self.theta3) = self.inverse_kinematics(trajectory_x, trajectory_y, trajectory_a)
+            if self.theta1 is not None:
+                self.set_target(self.theta1, self.theta2, self.theta3)
+            self.evaluate(delta_t)
 

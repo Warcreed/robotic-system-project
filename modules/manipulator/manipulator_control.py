@@ -24,6 +24,5 @@ class ArmControl:
     def evaluate(self, delta_t):
         self.w_target = self.position_controller.evaluate(delta_t, self.theta_target, self.arm.theta)
         self.torque = self.speed_controller.evaluate(delta_t, self.w_target, self.arm.w)
-        #print(">>", self, self.w_target, self.target)
         self.arm.evaluate(self.torque, delta_t)
 
