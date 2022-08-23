@@ -65,18 +65,17 @@ class NF1:
         # ricorsione celle vicine incrementando valore a partire dal target (valore 0)
         self.__nf1_adjacent_cells_value_spreading(i, j)
 
-    def build_path(self, x_start, y_start, current_alpha, target_alpha):
+    def build_path(self, x_start, y_start, current_alpha_deg, target_alpha_deg):
         next_cell = NF1Cell(x= x_start, y= y_start)
         while next_cell.get_value() > 0:
             next_cell = self.get_next_cell(next_cell.x, next_cell.y) # get next NF1Cell
-            self.path.append( [next_cell.x, next_cell.y, target_alpha] )
+            self.path.append( [next_cell.x, next_cell.y, target_alpha_deg] )
         
-        # increment = (target_alpha - current_alpha) / len(self.path)
-        # print(increment)
-        # incr = increment
-        # for el in self.path:
-        #     el[2] = current_alpha + incr
-        #     incr += increment
+        increment = (target_alpha_deg - current_alpha_deg) / len(self.path)
+        incr = increment
+        for el in self.path:
+            el[2] = current_alpha_deg + incr
+            incr += increment
         return self.path
 
     def get_next_cell(self, x, y):
@@ -136,6 +135,7 @@ class NF1:
             for p in range (j-1, j+2):
                 if (not(k==i and p==j)) and (k >= 0 and k < self.resolution) and (p >= 0 and p < self.resolution) and (self._world_matrix[k][p].get_value() > value + 1) and not self._world_matrix[k][p].is_obstacle() :                    
                     self.__nf1_adjacent_cells_value_spreading(k, p, value + 1)
+        return
     
     def paint(self, qp, print_map=False, print_obstacle=False, print_map_values=False, print_coord=False, print_path=False):
         qp.setPen(QtCore.Qt.blue)

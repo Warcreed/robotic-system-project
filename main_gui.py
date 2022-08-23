@@ -126,9 +126,9 @@ class MainWindow(QWidget):
         self._build_path(self.target_alpha_deg)
         self.arm.start()
 
-    def _build_path(self, target_alpha):
+    def _build_path(self, target_alpha_deg):
         (x, y, a) = self.arm.get_pose_xy_a()
-        path = self.nf1.build_path(x, y, a, target_alpha)
+        path = self.nf1.build_path(x, y, math.degrees(a), target_alpha_deg)
         self.arm.set_path(path.copy())
 
     def sense_block_presence(self): #da sistemare

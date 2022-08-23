@@ -78,7 +78,7 @@ class ThreeJointsArm:
         
     def start(self):
         (x_current, y_current, a_current) = self.get_pose_xy_a()
-        self.trajectory.start( (x_current, y_current, a_current))
+        self.trajectory.start( (x_current, y_current, math.degrees(a_current)))
 
     def evaluate_trajectory(self, delta_t):
         pose = self.get_pose_xy_a()

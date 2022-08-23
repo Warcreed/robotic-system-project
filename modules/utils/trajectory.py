@@ -89,11 +89,11 @@ class VirtualRobot2D:
 
 class Path2DManipulator:
 
-    def __init__(self, _vmax, _acc, _dec, _distance_threshold, _alpha_threshold):
+    def __init__(self, _vmax, _acc, _dec, _distance_threshold, _alpha_deg_threshold):
         self.target_got = False
         self.path_active = False
         self.distance_threshold = _distance_threshold
-        self.alpha_threshold = _alpha_threshold
+        self.alpha_deg_threshold = _alpha_deg_threshold
         self.path = [ ]
         self.trajectory = VirtualRobot2D(_vmax, _acc, _dec)
 
