@@ -43,7 +43,7 @@ class MainWindow(QWidget):
         self.delta_t = 1e-3 # 10ms of time-tick
         self.t = 0
 
-        self.trajectory = Path2DManipulator(_vmax = 1.0, _acc = 0.5, _dec = 0.5, _distance_threshold=0.01, _alpha_threshold=0.01)
+        self.trajectory = Path2DManipulator(_vmax = 0.1, _acc = 0.1, _dec = 0.1, _distance_threshold=0.005, _alpha_deg_threshold=1.5)
 
         self.arm = ThreeJointsArm(self.trajectory)
         self.arm_painter = ThreeJointsArmPainter(self.arm)
@@ -54,7 +54,6 @@ class MainWindow(QWidget):
         self.px_world_floor_level = Pose.pixel_scale(World.FLOOR_LEVEL)
 
         self.telemetry = Telemetry()
-        self.seconds_after_show_telemetry = 10
 
         self._timer_painter = QtCore.QTimer(self)
         self._timer_painter.timeout.connect(self.go)
@@ -68,7 +67,7 @@ class MainWindow(QWidget):
             Pose(0.235, 0.032, -90),
             Pose(0.275, 0.032, -90),
             Pose(0.265, 0.11, 0),
-            Pose(0.265, 0.19, 0),
+            Pose(0.255, 0.19, 0),
             Pose(0.275, 0.215, 100),
             Pose(0.175, 0.295, 0),
             Pose(0.155, 0.3, 70),
@@ -89,25 +88,25 @@ class MainWindow(QWidget):
         # print check
 
         ## Manipulator
-        self.print_end_effector_ray = True
+        self.print_end_effector_ray = False
 
         ## telemetry
         self.show_telemetry = False
         self.print_telemetry_base_joint= True
         self.print_telemetry_second_joint= False
         self.print_telemetry_end_eff_joint= False
+        self.seconds_after_show_telemetry = 20
 
         ## obstacles
-        self.print_block_slots = True
+        self.print_block_slots = False
         self.print_scaled_obstacle = False
         
         ## NF1
-        self.print_nf1 = True
         self.print_nf1_map = False
         self.print_nf1_obstacle = False
         self.print_nf1_map_values = False
         self.print_nf1_coord = False
-        self.print_nf1_path = True
+        self.print_nf1_path = False
 
     def set_phidias_agent(self, _phidias_agent):
         self._phidias_agent = _phidias_agent
@@ -198,8 +197,7 @@ class MainWindow(QWidget):
         qp.setPen(QtCore.Qt.black)
         self.arm_painter.paint(qp, self.t, print_ray=self.print_end_effector_ray)        
         self.world.paint(qp, print_block_slots= self.print_block_slots, print_scaled_obstacles= self.print_scaled_obstacle)
-        if self.print_nf1:
-            self.nf1.paint(qp, print_map=self.print_nf1_map, print_obstacle= self.print_nf1_obstacle, print_map_values=self.print_nf1_map_values, print_coord=self.print_nf1_coord, print_path=self.print_nf1_path)
+        self.nf1.paint(qp, print_map=self.print_nf1_map, print_obstacle= self.print_nf1_obstacle, print_map_values=self.print_nf1_map_values, print_coord=self.print_nf1_coord, print_path=self.print_nf1_path)
 
         qp.end()
 
