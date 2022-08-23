@@ -112,10 +112,9 @@ class Path2DManipulator:
         self.y_current = y
         target_distance = math.hypot(pose[0] - self.current_target[0],
                                      pose[1] - self.current_target[1])
-        if target_distance < self.distance_threshold: # TODO: controllare che termini il movimento angolare prima di completare (end eff non ruota del tutto)
-            target_alpha = abs(alpha - pose[2])
-            if self.target_got and target_alpha > self.alpha_threshold:
-                return  (x, y, alpha)
+
+        target_alpha = abs(alpha - math.degrees(pose[2]))
+        if target_distance < self.distance_threshold and target_alpha < self.alpha_deg_threshold: 
             return None
         return (x, y, alpha)
     
