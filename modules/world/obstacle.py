@@ -13,8 +13,8 @@ POLYGON_TYPE_ARRAY = [
         QtGui.QPolygon([
             QtCore.QPoint(-20, 7),
             QtCore.QPoint(38, -60),
-            QtCore.QPoint(110, 0),
-            QtCore.QPoint(110, 65),
+            QtCore.QPoint(115, 0),
+            QtCore.QPoint(115, 65),
             QtCore.QPoint(45, 65),
             QtCore.QPoint(45, 5),
         ]),
@@ -56,9 +56,9 @@ POLYGON_TYPE_ARRAY = [
             QtCore.QPoint(0, -10),
             QtCore.QPoint(110, -10),
             QtCore.QPoint(110, 30),
-            QtCore.QPoint(70, 45),
-            QtCore.QPoint(70, 60),
-            QtCore.QPoint(-10, 60),
+            QtCore.QPoint(70, 48),
+            QtCore.QPoint(70, 70),
+            QtCore.QPoint(-15, 70),
         ]),
     ),
     (
@@ -71,7 +71,7 @@ POLYGON_TYPE_ARRAY = [
         QtGui.QPolygon([
             QtCore.QPoint(-10, -10),
             QtCore.QPoint(85, 0),
-            QtCore.QPoint(50, 90),
+            QtCore.QPoint(50, 100),
             QtCore.QPoint(-7, 60),
         ]),
     ),
