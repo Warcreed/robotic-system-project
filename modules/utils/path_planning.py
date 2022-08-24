@@ -14,17 +14,21 @@ class NF1:
         self.x_gap = World.WIDTH / resolution
         self.y_gap = World.HEIGHT / resolution
         self.path = [] 
+        self._build_matrix(resolution)
 
+    # build matrix based on resolution value (resolution x resolution), every cell is a NF1Cell
+    def _build_matrix(self, resolution):
         y_temp = World.HEIGHT - ((World.HEIGHT / resolution) / 2)
-        for i in range(resolution):                                 # costruzione matrice secondo la risoluzione
+        for i in range(resolution):
             temp_row = []
             x_temp = ((World.WIDTH / resolution) / 2)
             for j in range(resolution):
-                temp_row.append(NF1Cell(x= x_temp, y= y_temp))      # ogni cella è una NF1Cell
+                temp_row.append(NF1Cell(x= x_temp, y= y_temp))
                 x_temp += self.x_gap
             self._world_matrix.append(temp_row)            
             y_temp -= self.y_gap
         
+    # set NF1Cell unable to be picked due to obstacle
     def set_is_obstacle_for_world_matrix(self, obstacles):
         half_x_gap = self.x_gap / 2
         half_y_gap = self.y_gap / 2
@@ -38,6 +42,7 @@ class NF1:
                             ))):
                         el.set_is_obstacle(True)
     
+    # set NF1Cell unable to be picked due to bowl
     def set_bowl_as_obstacle_for_world_matrix(self, bowl):
         half_x_gap = self.x_gap / 2
         half_y_gap = self.y_gap / 2
@@ -58,30 +63,33 @@ class NF1:
                 el.set_value(math.inf)
 
     def run_nf1_for_taget_xy(self, x_taget, y_taget):
-        # reset valori mappa
         self.__reset_matrix()
-        # determinare cella target
+        # get target cell
         (i, j) = self.__get_cell_index_by_xy(x_taget, y_taget)
-        # ricorsione celle vicine incrementando valore a partire dal target (valore 0)
+        # recursion to neighboring cells by increasing value starting from the target (value 0)
         self.__nf1_adjacent_cells_value_spreading(i, j)
 
+    # recursive spreading based on NF1
+    def __nf1_adjacent_cells_value_spreading(self, i, j, value= 0):
+        self._world_matrix[i][j].set_value(value)
+        for k in range(i-1, i+2):
+            for p in range (j-1, j+2):
+                if (not(k==i and p==j)) and (k >= 0 and k < self.resolution) and (p >= 0 and p < self.resolution) and (self._world_matrix[k][p].get_value() > value + 1) and not self._world_matrix[k][p].is_obstacle() :                    
+                    self.__nf1_adjacent_cells_value_spreading(k, p, value + 1)
+
+    # build path from current end eff position to target
     def build_path(self, x_start, y_start, current_alpha_deg, target_alpha_deg):
         next_cell = NF1Cell(x= x_start, y= y_start)
         while next_cell.get_value() > 0:
             next_cell = self.get_next_cell(next_cell.x, next_cell.y) # get next NF1Cell
             self.path.append( [next_cell.x, next_cell.y, target_alpha_deg] )
-        
-        increment = (target_alpha_deg - current_alpha_deg) / len(self.path)
-        incr = increment
-        for el in self.path:
-            el[2] = current_alpha_deg + incr
-            incr += increment
+        self._split_deg_based_on_path_length(current_alpha_deg, target_alpha_deg)
         return self.path
 
+    # cell is scanned in order from top left to bottom right
+    # cell picking could be improved keeping tracking of last cell
     def get_next_cell(self, x, y):
-        # prendere cella posizione attuale braccio
         (i, j) = self.__get_cell_index_by_xy(x, y)
-        # prendere la cella successiva
         min = math.inf
         i_target = i
         j_target = j
@@ -94,7 +102,6 @@ class NF1:
                         i_target = k
                         j_target = p
         return self._world_matrix[i_target][j_target]
-
 
     def __get_cell_index_by_xy(self, x, y):
         half_x_gap = self.x_gap / 2
@@ -110,99 +117,77 @@ class NF1:
                 if polygon.intersects(QtGui.QPolygon([QtCore.QPoint(pos_x, pos_y)])):
                      return (i, j)
         return (None, None)
-       
 
-    # calcolo con distanza euclidea
-    # def __get_cell_index_by_xy(self, x, y):
-    #     min = math.inf
-    #     i_index = None
-    #     j_index = None
-    #     target = (x, y)
-    #     for i in range(len(self._world_matrix)):
-    #         for j in range(len(self._world_matrix)):
-    #             cell_point = (self._world_matrix[i][j].x + self.x_shift, self._world_matrix[i][j].y + self.y_shift)
-    #             distance = math.sqrt(sum([(a - b) ** 2 for a, b in zip(target, cell_point)])) # distanza euclidea
-    #             if distance < min:
-    #                 min = distance
-    #                 i_index = i
-    #                 j_index = j                
-    #     return (i_index, j_index)
-
-    # spreading ricorsivo del valore secondo NF1
-    def __nf1_adjacent_cells_value_spreading(self, i, j, value= 0):
-        self._world_matrix[i][j].set_value(value)
-        for k in range(i-1, i+2):
-            for p in range (j-1, j+2):
-                if (not(k==i and p==j)) and (k >= 0 and k < self.resolution) and (p >= 0 and p < self.resolution) and (self._world_matrix[k][p].get_value() > value + 1) and not self._world_matrix[k][p].is_obstacle() :                    
-                    self.__nf1_adjacent_cells_value_spreading(k, p, value + 1)
-        return
+    def _split_deg_based_on_path_length(self, current_alpha_deg, target_alpha_deg):
+        increment = (target_alpha_deg - current_alpha_deg) / len(self.path)
+        incr = increment
+        for el in self.path:
+            el[2] = current_alpha_deg + incr
+            incr += increment
     
     def paint(self, qp, print_map=False, print_obstacle=False, print_map_values=False, print_coord=False, print_path=False):
         qp.setPen(QtCore.Qt.blue)
-
         if print_map:
-            for i in range(len(self._world_matrix[0])):   # last row and last col is not printed    
-                qp.drawLine(
-                    int(Pose.pixel_scale((self._world_matrix[i][0].x - self.x_gap / 2) + self.x_shift)), 
-                    int(Pose.pixel_scale((self._world_matrix[i][0].y - self.y_gap / 2) + self.y_shift)),
-                    int(Pose.pixel_scale((self._world_matrix[i][-1].x - self.x_gap / 2) + self.x_shift)), 
-                    int(Pose.pixel_scale((self._world_matrix[i][-1].y - self.y_gap / 2)+ self.y_shift))),     
-                qp.drawLine(
-                    int(Pose.pixel_scale((self._world_matrix[0][i].x - self.x_gap / 2) + self.x_shift)), 
-                    int(Pose.pixel_scale((self._world_matrix[0][i].y - self.y_gap / 2) + self.y_shift)),
-                    int(Pose.pixel_scale((self._world_matrix[-1][i].x - self.x_gap / 2) + self.x_shift)), 
-                    int(Pose.pixel_scale((self._world_matrix[-1][i].y - self.y_gap / 2) + self.y_shift))),
-                qp.drawText(
-                    Pose.pixel_scale(self._world_matrix[i][0].x - self.x_gap  + self.x_shift ), 
-                    Pose.pixel_scale(World.HEIGHT - self._world_matrix[i][0].y - self.y_gap  + self.y_shift ), 
-                    str(i - 1))
-                qp.drawText(
-                    Pose.pixel_scale(self._world_matrix[0][i].x - self.x_gap + self.x_shift ), 
-                    Pose.pixel_scale(World.HEIGHT - self._world_matrix[0][i].y - self.y_gap + self.y_shift ), 
-                    str(i - 1))        
-        
-        # print obstacle
+            self.print_map(qp)
         if print_obstacle:
-            qp.setFont(QtGui.QFont("times",10)); 
-            for els in self._world_matrix:
-                for el in els:
-                    qp.drawText(Pose.pixel_scale(el.x + self.x_shift), Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(el.is_obstacle()))
-
-        # print map values
+            self.print_obstacles(qp)
         if print_map_values:
-            for els in self._world_matrix:
-                for el in els:
-                    qp.drawText(
-                        Pose.pixel_scale(el.x + self.x_shift), 
-                        Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(el.get_value()))
+            self.print_map_values(qp)
         if print_coord:
-            for els in self._world_matrix:
-                for el in els:
-                    qp.drawText(
-                        Pose.pixel_scale(el.x + self.x_shift), 
-                        Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(round(el.x, 3)) + "/" + str(round(el.y, 3)))
-
+            self.print_coord(qp)
         if print_path:
-            if len(self.path) > 0:
-                qp.setPen(QtGui.QColor(217,95,14))
-                last_el = self.path[0]
-                for el in self.path:
-                    last_el_px = Pose.xy_to_pixel(last_el[0], last_el[1])
-                    el_px = Pose.xy_to_pixel(el[0], el[1])
-                    qp.drawLine(last_el_px[0], last_el_px[1], el_px[0], el_px[1])
-                    last_el = el
+            self.print_path(qp)
 
-        # qp.setPen(QtCore.Qt.blue)
-        # qp.setBrush(QtCore.Qt.red)
-        # for els in self._world_matrix:
-        #     for el in els:
-        #         qp.drawRect(
-        #             Pose.pixel_scale(el.x + self.x_shift), 
-        #             Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), 
-        #             Pose.pixel_scale(0.006),
-        #             Pose.pixel_scale(0.006)
-        #             )
+    def print_map(self, qp):
+        for i in range(len(self._world_matrix[0])):   # last row and last col is not printed    
+            qp.drawLine(
+                int(Pose.pixel_scale((self._world_matrix[i][0].x - self.x_gap / 2) + self.x_shift)), 
+                int(Pose.pixel_scale((self._world_matrix[i][0].y - self.y_gap / 2) + self.y_shift)),
+                int(Pose.pixel_scale((self._world_matrix[i][-1].x - self.x_gap / 2) + self.x_shift)), 
+                int(Pose.pixel_scale((self._world_matrix[i][-1].y - self.y_gap / 2)+ self.y_shift))),     
+            qp.drawLine(
+                int(Pose.pixel_scale((self._world_matrix[0][i].x - self.x_gap / 2) + self.x_shift)), 
+                int(Pose.pixel_scale((self._world_matrix[0][i].y - self.y_gap / 2) + self.y_shift)),
+                int(Pose.pixel_scale((self._world_matrix[-1][i].x - self.x_gap / 2) + self.x_shift)), 
+                int(Pose.pixel_scale((self._world_matrix[-1][i].y - self.y_gap / 2) + self.y_shift))),
+            qp.drawText(
+                Pose.pixel_scale(self._world_matrix[i][0].x - self.x_gap  + self.x_shift ), 
+                Pose.pixel_scale(World.HEIGHT - self._world_matrix[i][0].y - self.y_gap  + self.y_shift ), 
+                str(i - 1))
+            qp.drawText(
+                Pose.pixel_scale(self._world_matrix[0][i].x - self.x_gap + self.x_shift ), 
+                Pose.pixel_scale(World.HEIGHT - self._world_matrix[0][i].y - self.y_gap + self.y_shift ), 
+                str(i - 1))
+    
+    def print_obstacles(self, qp):
+        qp.setFont(QtGui.QFont("times",10)); 
+        for els in self._world_matrix:
+            for el in els:
+                qp.drawText(Pose.pixel_scale(el.x + self.x_shift), Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(el.is_obstacle()))
 
+    def print_map_values(self, qp):
+        for els in self._world_matrix:
+            for el in els:
+                qp.drawText(
+                    Pose.pixel_scale(el.x + self.x_shift), 
+                    Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(el.get_value()))
+
+    def print_coord(self, qp):
+        for els in self._world_matrix:
+            for el in els:
+                qp.drawText(
+                    Pose.pixel_scale(el.x + self.x_shift), 
+                    Pose.pixel_scale(World.HEIGHT - el.y + self.y_shift), str(round(el.x, 3)) + "/" + str(round(el.y, 3)))
+    
+    def print_path(self, qp):
+        if len(self.path) > 0:
+            qp.setPen(QtGui.QColor(217,95,14))
+            last_el = self.path[0]
+            for el in self.path:
+                last_el_px = Pose.xy_to_pixel(last_el[0], last_el[1])
+                el_px = Pose.xy_to_pixel(el[0], el[1])
+                qp.drawLine(last_el_px[0], last_el_px[1], el_px[0], el_px[1])
+                last_el = el
 class NF1Cell:
     def __init__(self, x, y, value= math.inf, is_obstacle=False):
         self.x = x

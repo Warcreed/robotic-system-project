@@ -1,6 +1,5 @@
 import math
 
-
 class VirtualRobot:
 
     ACCEL = 0

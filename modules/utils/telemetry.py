@@ -6,7 +6,6 @@ class Telemetry:
         self.plotter = DataPlotter()         
 
     def gather(self, delta_t,  base_joint, second_joint, end_effector_joint):
-
         self.plotter.add('t', delta_t)
 
         # base_joint

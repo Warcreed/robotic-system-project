@@ -4,28 +4,31 @@ from phidias.Lib import *
 from phidias.Agent import *
 
 # ---------------------------------------------------------------------
-# Agent 'block_manager'
+# Agent 'blocks_manager'
 # ---------------------------------------------------------------------
 
 class generate_blocks(Procedure): pass
 class _pick_block(Procedure): pass
 
+# reactors sent by main agent
 class gen(Reactor): pass
 class block_slot_status(Reactor): pass
 class block_slot_color(Reactor): pass
 class pick_block(Reactor): pass
 
+# beliefs interpreted by the robot
 class new_block(Belief): pass
 
+# intern beliefs used by blocks_manager
 class block_slot(Belief): pass
 
 # beliefs interpreted by the main agent
 class pick_block_at(Reactor): pass
 class no_more_blocks(Reactor): pass
 
-def_vars('C', 'D', 'N', 'B', '_from')
+def_vars('_from', 'N', 'B', 'D', 'C')
 
-class block_manager(Agent):
+class blocks_manager(Agent):
     def main(self):
 
       # generating blocks
@@ -77,12 +80,12 @@ class block_manager(Agent):
         +no_more_blocks()[{'to': 'main@127.0.0.1:6565'}]
       ]
 
-agent_block_manager = block_manager()
-agent_block_manager.start()
+agent_blocks_manager = blocks_manager()
+agent_blocks_manager.start()
 
 # block_slot(index, busy) busy parameter is determined during scansion
 for i in range(10):
-  agent_block_manager.assert_belief(block_slot(i, False))
+  agent_blocks_manager.assert_belief(block_slot(i, False))
 
 PHIDIAS.run_net(globals(), 'http', 6767)
 PHIDIAS.shell(globals())

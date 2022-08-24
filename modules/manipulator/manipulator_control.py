@@ -1,10 +1,9 @@
 import math
 from lib.controllers.standard import *
-from lib.controllers.profile_position_control import *
 
 class ArmControl:
 
-    def __init__(self, arm, base_joint=False):
+    def __init__(self, arm, base_joint=False): # TODO: eliminare base_joint e controllare taratura controllori
         self.arm = arm
         # self.speed_controller = PIDSat(kp=0.3, ki=10, kd=0, saturation=10, antiwindup=True) if self.arm.L < 0.03 else PIDSat(kp=200, ki=3, kd=0, saturation=10, antiwindup=True)
         # self.position_controller = PIDSat(kp=8, ki=0, kd=0, saturation=10, antiwindup=True)

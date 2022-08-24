@@ -82,7 +82,7 @@ class Block:
     def follow_end_effector(self, arm):
         (x,y,a) = arm.get_pose_xy_a()
         L = arm.element_3_model.L
-        x_1 = (L+L/4) * math.cos(a) + x       # sposta punto di controllo su end effector
+        x_1 = (L+L/4) * math.cos(a) + x
         y_1 = (L+L/4) * math.sin(a) + y
         self.__pose.set_pose(x_1, y_1, math.degrees(self.__a))
     
