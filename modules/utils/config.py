@@ -13,10 +13,10 @@ class Config:
 
     ## telemetry
     show_telemetry = False
-    print_telemetry_base_joint= True
-    print_telemetry_second_joint= False
+    print_telemetry_base_joint= False
+    print_telemetry_second_joint= True
     print_telemetry_end_eff_joint= False
-    seconds_after_show_telemetry = 20
+    seconds_after_show_telemetry = 7
 
     ## obstacles
     print_block_slots = False
