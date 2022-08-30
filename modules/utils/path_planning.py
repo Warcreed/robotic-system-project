@@ -23,7 +23,7 @@ class NF1:
             temp_row = []
             x_temp = ((World.WIDTH / resolution) / 2)
             for j in range(resolution):
-                temp_row.append(NF1Cell(x= x_temp, y= y_temp))
+                temp_row.append(NF1Cell(i=i, j=j, x= x_temp, y= y_temp))
                 x_temp += self.x_gap
             self._world_matrix.append(temp_row)            
             y_temp -= self.y_gap
@@ -80,9 +80,11 @@ class NF1:
     # build path from current end eff position to target
     def build_path(self, x_start, y_start, current_alpha_deg, target_alpha_deg):
         next_cell = NF1Cell(x= x_start, y= y_start)
+        path = [] 
         while next_cell.get_value() > 0:
-            next_cell = self.get_next_cell(next_cell.x, next_cell.y) # get next NF1Cell
-            self.path.append( [next_cell.x, next_cell.y, target_alpha_deg] )
+            next_cell = self.get_next_cell(next_cell.x, next_cell.y)
+            path.append( next_cell ) # get next NF1Cell
+        self.path = self._detect_path_vertex(path)
         self._split_deg_based_on_path_length(current_alpha_deg, target_alpha_deg)
         return self.path
 
@@ -117,6 +119,24 @@ class NF1:
                 if polygon.intersects(QtGui.QPolygon([QtCore.QPoint(pos_x, pos_y)])):
                      return (i, j)
         return (None, None)
+
+    def _detect_path_vertex(self, path):
+        if len(path) < 1:
+            return []
+        polished_path = []
+        polished_path.append([path[0].x, path[0].y, 0])
+        last_path_el = path[0]
+        last_last_path_el = path[0]
+        for el in path:
+            (last_last_i, last_last_j) = last_last_path_el.get_indexes()
+            (last_i, last_j) = last_path_el.get_indexes()
+            (i, j) = el.get_indexes()
+            if((i - last_i) + (j -last_j) != (last_i - last_last_i) + (last_j - last_last_j)):
+                polished_path.append( [last_path_el.x, last_path_el.y, 0] )
+            last_last_path_el = last_path_el
+            last_path_el = el
+        polished_path.append([path[-1].x, path[-1].y, 0])
+        return polished_path
 
     def _split_deg_based_on_path_length(self, current_alpha_deg, target_alpha_deg):
         increment = (target_alpha_deg - current_alpha_deg) / len(self.path)
@@ -189,7 +209,9 @@ class NF1:
                 qp.drawLine(last_el_px[0], last_el_px[1], el_px[0], el_px[1])
                 last_el = el
 class NF1Cell:
-    def __init__(self, x, y, value= math.inf, is_obstacle=False):
+    def __init__(self, i=0, j=0, x=0, y=0, value= math.inf, is_obstacle=False):
+        self.i = i
+        self.j = j
         self.x = x
         self.y = y
         self._value = value
@@ -206,3 +228,6 @@ class NF1Cell:
 
     def get_value(self):
         return self._value
+    
+    def get_indexes(self):
+        return (self.i, self.j)

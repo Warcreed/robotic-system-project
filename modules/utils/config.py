@@ -2,8 +2,6 @@ from modules.utils.pose import Pose
 from modules.world.block import BlockSlot
 from modules.world.obstacle import Obstacle
 
-from PyQt5 import QtGui, QtCore
-
 class Config:
 
     # main_gui.py
@@ -12,11 +10,11 @@ class Config:
     print_end_effector_ray = False
 
     ## telemetry
-    show_telemetry = False
-    print_telemetry_base_joint= False
+    show_telemetry = True
+    print_telemetry_base_joint= True
     print_telemetry_second_joint= True
-    print_telemetry_end_eff_joint= False
-    seconds_after_show_telemetry = 7
+    print_telemetry_end_eff_joint= True
+    seconds_after_show_telemetry = 60
 
     ## obstacles
     print_block_slots = False
@@ -28,7 +26,7 @@ class Config:
     print_nf1_obstacle = False
     print_nf1_map_values = False
     print_nf1_coord = False
-    print_nf1_path = False
+    print_nf1_path = True
 
     # End Effector pose related to BlockSlot
     end_eff_block_poses = [
@@ -73,3 +71,7 @@ class Config:
         BlockSlot(x = 0.11, y = 0.305, a = -24),       
         BlockSlot(x = 0.045, y = 0.292, a = -50),       
     ]
+
+    # Trajectory
+
+    use_final_decel_flag = True

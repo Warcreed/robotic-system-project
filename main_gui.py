@@ -19,8 +19,7 @@ from modules.phidias.phidias_interface import *
 
 COLOR_NAMES = [ 'red', 'green', 'blue' ]
 
-# TODO: rendere smooth il passaggio tra le spezzate
-# TODO: controllare il movimento end effector
+# TODO: controllare alcuni spike di potenza, tuning costanti
 # TODO: controllare taratura
 
 class MainWindow(QWidget):
