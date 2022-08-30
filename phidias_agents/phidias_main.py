@@ -42,7 +42,7 @@ class generate(Procedure): pass
 class pick(Procedure): pass
 
 # auxiliary controls
-class _go(Procedure): pass
+class go(Procedure): pass
 class _scan_block_slot(Procedure): pass
 class _pick_blocks(Procedure): pass
 
@@ -62,8 +62,8 @@ class main(Agent):
       pick() >> [ +mode("scanning"), _scan_block_slot(0) ]
 
       # auxiliary controls
-      _go(X) >> [ +go_to_block_slot(X)[{'to': 'robot@127.0.0.1:6566'}] ]
-      _go(X,Y,A) >> [ +go_to(X,Y,A)[{'to': 'robot@127.0.0.1:6566'}] ]
+      go(X) >> [ +go_to_block_slot(X)[{'to': 'robot@127.0.0.1:6566'}] ]
+      go(X,Y,A) >> [ +go_to(X,Y,A)[{'to': 'robot@127.0.0.1:6566'}] ]
 
       generate(N) >> [ show_line("Attenzione! Numero di blocchi generabili [1, 6]") ]
       generate() >> [ show_line("Attenzione! Indicare numero di blocchi da generare: generate(N), con N=[1, 6]") ]
@@ -74,10 +74,10 @@ class main(Agent):
       _scan_block_slot(10) / idle_target_pos(X, Y, A) >> [ 
         show_line("End scan\n"), 
         +mode("start_collecting"), 
-        _go(X, Y, A)
+        go(X, Y, A)
       ]
 
-      _scan_block_slot(N) >> [ _go(N), +target(N) ]
+      _scan_block_slot(N) >> [ go(N), +target(N) ]
 
       +target_got()[{'from': _from}] / (target(N) & mode(M) & eq(M, "scanning")) >> [
         show_line('\nReached Target ', N),
@@ -116,7 +116,7 @@ class main(Agent):
         +pick_block()[{'to': 'blocks_manager@127.0.0.1:6767'}] 
       ]
 
-      +pick_block_at(N)[{'from':_from}] >> [ _go(N), +target(N)]
+      +pick_block_at(N)[{'from':_from}] >> [ go(N), +target(N)]
 
       +target_got()[{'from': _from}] / (target(N) & mode(M) & eq(M, "collecting")) >> [
         show_line('\nReached Target: collecting block in slot ', N),
@@ -125,7 +125,7 @@ class main(Agent):
 
       +block_collected()[{'from': _from}] / bowl_target_pos(X, Y, A) >> [
         +mode("dropping"),
-        _go(X, Y, A),
+        go(X, Y, A),
       ]
 
       +target_got()[{'from': _from}] / (mode(M) & eq(M, "dropping")) >> [
@@ -142,7 +142,7 @@ class main(Agent):
       +no_more_blocks()[{'from':_from}] / idle_target_pos(X, Y, A) >> [
         show_line("All blocks collected!"),
         +mode(''),
-        _go(X, Y, A)
+        go(X, Y, A)
       ]
       
 
