@@ -113,7 +113,7 @@ class Path2DManipulator:
                                      pose[1] - self.current_target[1])
 
         target_alpha = abs(alpha - math.degrees(pose[2]))
-        if target_distance < self.distance_threshold and target_alpha < self.alpha_deg_threshold: 
+        if target_distance < self.distance_threshold and (len(self.path) != 0 or target_alpha < self.alpha_deg_threshold): 
             return None
         return (x, y, alpha)
     
