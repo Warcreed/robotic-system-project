@@ -58,7 +58,6 @@ class MainWindow(QWidget):
         self.nf1 = NF1(Config.nf1_map_resolution)
         self.nf1.set_is_obstacle_for_world_matrix(self.world.get_obstacles())
         self.nf1.set_bowl_as_obstacle_for_world_matrix(self.world.get_bowl())
-        self.target_alpha_deg = 0
 
         # set initial position
         target_x = 0.1
@@ -75,16 +74,15 @@ class MainWindow(QWidget):
 
     def go_to(self,target_x, target_y, target_alpha):
         self.notification = False
-        self.target_alpha_deg = target_alpha
         self.nf1.run_nf1_for_taget_xy(target_x, target_y)
-        self._build_path(self.target_alpha_deg)
+        self._build_path(target_alpha)
         self.arm.start()
     
     def go_to_block_slot(self, block_index):
         self.notification = False
-        (target_x, target_y, self.target_alpha_deg) = Config.end_eff_block_poses[block_index].get_pose()
+        (target_x, target_y, target_alpha_deg) = Config.end_eff_block_poses[block_index].get_pose()
         self.nf1.run_nf1_for_taget_xy(target_x, target_y)
-        self._build_path(self.target_alpha_deg)
+        self._build_path(target_alpha_deg)
         self.arm.start()
 
     def _build_path(self, target_alpha_deg):
