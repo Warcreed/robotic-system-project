@@ -10,18 +10,18 @@ class Config:
     print_end_effector_ray = False
 
     ## telemetry
-    show_telemetry = True
+    show_telemetry = False
     print_telemetry_base_joint= True
-    print_telemetry_second_joint= True
-    print_telemetry_end_eff_joint= True
-    seconds_after_show_telemetry = 60
+    print_telemetry_second_joint= False
+    print_telemetry_end_eff_joint= False
+    seconds_after_show_telemetry = 7
 
     ## obstacles
-    print_block_slots = False
+    print_block_slots = True
     print_scaled_obstacle = False
     
     ## NF1
-    nf1_map_resolution = 40
+    nf1_map_resolution = 30
     print_nf1_map = False
     print_nf1_obstacle = False
     print_nf1_map_values = False
@@ -30,15 +30,15 @@ class Config:
 
     # End Effector pose related to BlockSlot
     end_eff_block_poses = [
-        Pose(0.095, 0.0676, 0),
+        Pose(0.09, 0.0676, 0),
         Pose(0.235, 0.032, -90),
         Pose(0.275, 0.032, -90),
         Pose(0.265, 0.11, 0),
-        Pose(0.255, 0.19, 0),
+        Pose(0.260, 0.19, 0),
         Pose(0.275, 0.215, 100),
         Pose(0.175, 0.295, 0),
         Pose(0.155, 0.3, 70),
-        Pose(0.11, 0.28, 65),
+        Pose(0.11, 0.276, 65),
         Pose(0.09, 0.27, 130),            
     ]
 
