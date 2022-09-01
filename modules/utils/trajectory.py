@@ -19,6 +19,8 @@ class VirtualRobot:
     def set_position_target(self, target):
         self.p_target = target
         self.phase = VirtualRobot.ACCEL
+        self.v = 0 # current speed
+        self.p = 0 # current position
 
     def evaluate(self, delta_t):
         if self.phase == VirtualRobot.ACCEL:
