@@ -78,13 +78,15 @@ class NF1:
                     self.__nf1_adjacent_cells_value_spreading(k, p, value + 1)
 
     # build path from current end eff position to target
-    def build_path(self, x_start, y_start, current_alpha_deg, target_alpha_deg):
+    def build_path(self, x_start, y_start, current_alpha_deg, x_target, y_target, target_alpha_deg):
         next_cell = NF1Cell(x= x_start, y= y_start)
         path = [] 
         while next_cell.get_value() > 0:
             next_cell = self.get_next_cell(next_cell.x, next_cell.y)
             path.append( next_cell ) # get next NF1Cell
         self.path = self._detect_path_vertex(path)
+        self.path.insert(0, [x_start, y_start, target_alpha_deg])
+        self.path.append([x_target, y_target, target_alpha_deg])
         self._split_deg_based_on_path_length(current_alpha_deg, target_alpha_deg)
         return self.path
 

@@ -75,19 +75,19 @@ class MainWindow(QWidget):
     def go_to(self,target_x, target_y, target_alpha):
         self.notification = False
         self.nf1.run_nf1_for_taget_xy(target_x, target_y)
-        self._build_path(target_alpha)
+        self._build_path(target_x, target_y, target_alpha)
         self.arm.start()
     
     def go_to_block_slot(self, block_index):
         self.notification = False
         (target_x, target_y, target_alpha_deg) = Config.end_eff_block_poses[block_index].get_pose()
         self.nf1.run_nf1_for_taget_xy(target_x, target_y)
-        self._build_path(target_alpha_deg)
+        self._build_path(target_x, target_y, target_alpha_deg)
         self.arm.start()
 
-    def _build_path(self, target_alpha_deg):
+    def _build_path(self, target_x, target_y, target_alpha_deg):
         (x, y, a) = self.arm.get_pose_xy_a()
-        path = self.nf1.build_path(x, y, math.degrees(a), target_alpha_deg)
+        path = self.nf1.build_path(x, y, math.degrees(a), target_x, target_y, target_alpha_deg)
         self.arm.set_path(path.copy())
 
     def sense_block_presence(self): #da sistemare
