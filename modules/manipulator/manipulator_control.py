@@ -8,11 +8,11 @@ class ArmControl:
         # self.speed_controller = PIDSat(kp=0.3, ki=10, kd=0, saturation=10, antiwindup=True) if self.arm.L < 0.03 else PIDSat(kp=200, ki=3, kd=0, saturation=10, antiwindup=True)
         # self.position_controller = PIDSat(kp=8, ki=0, kd=0, saturation=10, antiwindup=True)
         if not end_effector:
-            self.speed_controller = PIDSat(kp=200, ki=3, kd=0, saturation=10, antiwindup=True)
-            self.position_controller = PIDSat(kp=8, ki=0, kd=0, saturation=10, antiwindup=True)
+            self.speed_controller = PIDSat(kp=330, ki=50, kd=0, saturation=10, antiwindup=True)
+            self.position_controller = PIDSat(kp=55, ki=0, kd=0, saturation=10, antiwindup=True)
         else:
-            self.speed_controller = PIDSat(kp=0.3, ki=10, kd=0, saturation=10, antiwindup=True)
-            self.position_controller = PIDSat(kp=3.5, ki=0, kd=0, saturation=10, antiwindup=True)
+            self.speed_controller = PIDSat(kp=2, ki=8, kd=0, saturation=10, antiwindup=True)  # todo: fare tuning
+            self.position_controller = PIDSat(kp=55, ki=0, kd=0, saturation=5, antiwindup=True)
         self.theta_target = 0
         self.w_target = 0
         self.torque = 0

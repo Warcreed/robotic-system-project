@@ -36,7 +36,7 @@ class ThreeJointsArm:
                  math.degrees(self.element_2_model.theta),
                  math.degrees(self.element_3_model.theta) )
 
-    def get_pose(self):
+    def get_pose(self): # implementa la cinematica diretta
         (x1, y1) = self.element_1_model.get_pose()
 
         (_x2, _y2) = self.element_2_model.get_pose()
@@ -64,9 +64,8 @@ class ThreeJointsArm:
     def inverse_kinematics(self, xt, yt, alpha):
         atan_den = (xt**2 + yt ** 2 - self.element_1_model.L ** 2 - self.element_2_model.L ** 2) / (2 * self.element_1_model.L * self.element_2_model.L )
         arg = 1 - atan_den**2
-        if arg < 0:
+        if arg < 0: # argomento sotto radice negativo, punto non raggiungibile secondo la geometria
             return (None, None, None)
-        # theta2 = math.atan2( - math.sqrt( arg ), atan_den ) if xt >= 0 else math.atan2( + math.sqrt( arg ), atan_den )
         theta2 = math.atan2( - math.sqrt( arg ), atan_den ) 
         theta1 = math.atan2(yt, xt) - math.atan2(self.element_2_model.L * math.sin(theta2),
                                                  self.element_1_model.L + self.element_2_model.L * math.cos(theta2) )
