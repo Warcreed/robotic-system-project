@@ -1,4 +1,3 @@
-import sys
 import math
 
 from PyQt5.QtGui import QPen

@@ -17,7 +17,7 @@ class Config:
     seconds_after_show_telemetry = 7
 
     ## obstacles
-    print_block_slots = True
+    print_block_slots = False
     print_scaled_obstacle = False
     
     ## NF1
@@ -26,7 +26,7 @@ class Config:
     print_nf1_obstacle = False
     print_nf1_map_values = False
     print_nf1_coord = False
-    print_nf1_path = True
+    print_nf1_path = False
 
     # End Effector pose related to BlockSlot
     end_eff_block_poses = [

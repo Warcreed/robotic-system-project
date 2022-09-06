@@ -36,7 +36,7 @@ class MainWindow(QWidget):
         self.delta_t = 1e-3 # 10ms of time-tick
         self.t = 0
 
-        self.trajectory = Path2DManipulator(_vmax = 0.6, _acc = 0.1, _dec = 0.1, _distance_threshold=0.005, _alpha_deg_threshold=1.5)
+        self.trajectory = Path2DManipulator(_vmax = 0.6, _acc = 0.2, _dec = 0.2, _distance_threshold=0.005, _alpha_deg_threshold=1.5)
 
         self.arm = ThreeJointsArm(self.trajectory)
         self.arm_painter = ThreeJointsArmPainter(self.arm)
