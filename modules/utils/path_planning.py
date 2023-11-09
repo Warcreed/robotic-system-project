@@ -1,5 +1,5 @@
 import math
-from PyQt5 import QtGui, QtCore
+from PyQt6 import QtGui, QtCore
 from modules.utils.pose import Pose
 
 from modules.world.world import World
@@ -148,7 +148,7 @@ class NF1:
             incr += increment
     
     def paint(self, qp, print_map=False, print_obstacle=False, print_map_values=False, print_coord=False, print_path=False):
-        qp.setPen(QtCore.Qt.blue)
+        qp.setPen(QtCore.Qt.GlobalColor.blue)
         if print_map:
             self.print_map(qp)
         if print_obstacle:

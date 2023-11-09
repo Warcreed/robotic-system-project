@@ -1,7 +1,7 @@
 import math
 
-from PyQt5.QtGui import QPen
-from PyQt5.QtCore import Qt, QPoint
+from PyQt6.QtGui import QPen
+from PyQt6.QtCore import Qt, QPoint
 from modules.utils.pose import *
 
 class ArmPainter:
@@ -10,11 +10,11 @@ class ArmPainter:
         self.arm = arm
 
     def draw_arm_element(self, qp, x1, y1, x2, y2, ellipse=True):
-        qp.setPen(QPen(Qt.black, 8))
+        qp.setPen(QPen(Qt.GlobalColor.black, 8))
         qp.drawLine(x1, y1, x2, y2)
 
         if ellipse:
-            qp.setPen(QPen(Qt.black, 3))
+            qp.setPen(QPen(Qt.GlobalColor.black, 3))
 
             qp.drawEllipse(QPoint(x1, y1), 10, 10)
             qp.drawEllipse(QPoint(x1, y1), 4, 4)
@@ -26,7 +26,7 @@ class ArmPainter:
 class ThreeJointsArmPainter(ArmPainter):
 
     def __init__(self, arm):
-        super(ThreeJointsArmPainter, self).__init__(arm)
+        super().__init__(arm)
 
     def print_ray(self, qp):
         (x,y,a) = self.arm.get_pose_xy_a()
@@ -35,7 +35,7 @@ class ThreeJointsArmPainter(ArmPainter):
         y_1 = (2.2*L) * math.sin(a) + y  
         (x_1, y_1) = Pose.xy_to_pixel(x_1, y_1)
         (x, y) = Pose.xy_to_pixel(x, y)
-        qp.setPen(QPen(Qt.blue, 3))
+        qp.setPen(QPen(Qt.GlobalColor.blue, 3))
         qp.drawLine(x, y, x_1, y_1)
 
     def paint(self, qp, t, print_ray=False):

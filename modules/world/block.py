@@ -1,11 +1,13 @@
 import math
-from PyQt5 import QtGui, QtCore
+from PyQt6 import QtGui, QtCore
+from PyQt6.QtGui import QColor, QPen, QBrush, QTransform
+from PyQt6.QtCore import Qt
 from lib.models.arm_model import GRAVITY
 from modules.utils.pose import *
 
-COLOR_MAP = { 'red' : QtGui.QColor(255,0,0),
-              'green' : QtGui.QColor(0,255,0),
-              'blue' : QtGui.QColor(0,0,255)
+COLOR_MAP = { 'red' : QColor(255,0,0),
+              'green' : QColor(0,255,0),
+              'blue' : QColor(0,0,255)
             }
 
 class BlockSlot:
@@ -100,12 +102,12 @@ class Block:
         if self.__dropping:
             self._dropping(time)
 
-        qp.setPen(QtCore.Qt.black)
-        qp.setBrush(COLOR_MAP[self.__color])
+        qp.setPen(QPen(Qt.GlobalColor.black))
+        qp.setBrush(QBrush(COLOR_MAP[self.__color]))
 
         (x, y) = self.__pose.to_pixel()
 
-        t = QtGui.QTransform()
+        t = QTransform()
         t.translate(x + self.__w/2, y - self.__h/2)
         t.rotate(-self.__pose.get_a())
         t.translate(-(x + self.__w/2), -(y - self.__h/2))

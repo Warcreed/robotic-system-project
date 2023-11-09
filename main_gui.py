@@ -7,8 +7,8 @@ sys.path.insert(0, './modules')
 
 import random
 
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt6 import QtGui, QtCore
+from PyQt6.QtWidgets import QApplication, QWidget
 
 from modules.manipulator.manipulator import *
 from modules.manipulator.manipulator_painters import *
@@ -157,7 +157,7 @@ class MainWindow(QWidget):
         qp.setBrush(QtGui.QColor(255,255,255))
         qp.drawRect(event.rect())   # white bg
 
-        qp.setPen(QtCore.Qt.black)
+        qp.setPen(QtCore.Qt.GlobalColor.black)
         self.arm_painter.paint(qp, self.t, print_ray=Config.print_end_effector_ray)        
         self.world.paint(qp, print_block_slots= Config.print_block_slots, print_scaled_obstacles= Config.print_scaled_obstacle)
         self.nf1.paint(qp, print_map=Config.print_nf1_map, print_obstacle= Config.print_nf1_obstacle, print_map_values=Config.print_nf1_map_values, print_coord=Config.print_nf1_coord, print_path=Config.print_nf1_path)
@@ -168,7 +168,7 @@ def main():
     app = QApplication(sys.argv)
     ex = MainWindow()
     start_message_server_http(ex)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == '__main__':
