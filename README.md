@@ -1,7 +1,10 @@
 # Robotic Manipulator Project
 This is a robotic project for the academic course "Robotic Systems", IT department (DMI), UniCT.
 
----------------
+The main goal is to collect all the objects in a specific color order —blue, green, then red— while avoiding obstacles. The system consists of three main components: the GUI and robot controller, the main declarative agent, and the block manager agent.
+
+![Demo](docs/exec_example.gif)
+
 
 ## Installation
 
@@ -26,7 +29,6 @@ MacOs:
 
 Next install [PHIDIAS](https://github.com/corradosantoro/phidias) and you are good to go.
 
----------------
 ## Run the project
 
 Run the following files in separate terminal instances: 
